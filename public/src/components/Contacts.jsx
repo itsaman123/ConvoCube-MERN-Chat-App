@@ -68,7 +68,7 @@ const Container = styled.div`
   display: grid;
   grid-template-rows: 10% 75% 15%;
   overflow: hidden;
-  background-color: #080420;
+  background-color: #1A1A1A;
   .brand {
     display: flex;
     align-items: center;
@@ -97,7 +97,7 @@ const Container = styled.div`
       }
     }
     .contact {
-      background-color: #ffffff34;
+      background-color: #2C74CC;
       min-height: 5rem;
       cursor: pointer;
       width: 90%;
@@ -119,7 +119,7 @@ const Container = styled.div`
       }
     }
     .selected {
-      background-color: #9a86f3;
+      background-color: #92A2CD;
     }
   }
 
