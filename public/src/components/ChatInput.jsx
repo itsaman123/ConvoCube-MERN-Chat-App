@@ -69,8 +69,19 @@ const Container = styled.div`
         font-size: 1.5rem;
         color: #ffff00c8;
         cursor: pointer;
+        
+      }
+      @media screen and (min-width: 390px) and (max-width: 719px) {
+        svg {
+          font-size: 1.5rem;
+          color: #ffff00c8;
+          cursor: pointer;
+          padding-right: .6rem;
+          overflow:hidden;
+        }
       }
       .emoji-picker-react {
+        
         position: absolute;
         top: -350px;
         background-color: #080420;
@@ -105,7 +116,9 @@ const Container = styled.div`
     align-items: center;
     gap: 2rem;
     background-color: #ffffff34;
+    padding-left: rem;
     input {
+      
       width: 90%;
       height: 60%;
       background-color: transparent;
@@ -129,10 +142,12 @@ const Container = styled.div`
       align-items: center;
       background-color: #9a86f3;
       border: none;
+      cursor:pointer;
       @media screen and (min-width: 720px) and (max-width: 1080px) {
         padding: 0.3rem 1rem;
         svg {
           font-size: 1rem;
+          
         }
       }
       svg {

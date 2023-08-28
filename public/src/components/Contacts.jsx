@@ -68,7 +68,7 @@ const Container = styled.div`
   display: grid;
   grid-template-rows: 10% 75% 15%;
   overflow: hidden;
-  background-color: #1A1A1A;
+  background-color: #172e2b;
   .brand {
     display: flex;
     align-items: center;
@@ -80,6 +80,13 @@ const Container = styled.div`
     h3 {
       color: white;
       text-transform: uppercase;
+    }
+  }
+  @media screen and (min-width: 390px) and (max-width: 719px) {
+    .brand {
+      h3 {
+        display:none;
+      }
     }
   }
   .contacts {
@@ -97,38 +104,54 @@ const Container = styled.div`
       }
     }
     .contact {
-      background-color: #2C74CC;
-      min-height: 5rem;
+      background-color: #172e2b;
+      min-height: 3.2rem;
       cursor: pointer;
       width: 90%;
-      border-radius: 0.2rem;
-      padding: 0.4rem;
+      
+      border: 0.07rem solid #1e403b;
+      border-radius: 0.1rem;
+      
       display: flex;
-      gap: 1rem;
+      gap: .2rem;
+      overflow:hidden;
       align-items: center;
       transition: 0.5s ease-in-out;
       .avatar {
         img {
-          height: 3rem;
+          height: 2.5rem;
         }
       }
       .username {
         h3 {
           color: white;
+          font-size: .8rem;
         }
       }
+      @media screen and (min-width: 390px) and (max-width: 719px) {
+        .username {
+          h3 {
+            color: white;
+            font-size: .6rem;
+            padding-left: .1rem;
+          }
+        }
+
+      }
     }
+    
     .selected {
       background-color: #92A2CD;
     }
   }
 
   .current-user {
-    background-color: #0d0d30;
+    background-color: #111c1a;
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 2rem;
+    gap: 1rem;
+    float:left;
     .avatar {
       img {
         height: 4rem;
@@ -146,6 +169,19 @@ const Container = styled.div`
         h2 {
           font-size: 1rem;
         }
+      }
+    }
+  }
+  @media screen and (min-width: 390px) and (max-width: 719px) {
+    .avatar {
+      img {
+        height: 4rem;
+        max-inline-size: 65%;
+      }
+    }
+    .username {
+      h2 {
+        display:none;
       }
     }
   }
