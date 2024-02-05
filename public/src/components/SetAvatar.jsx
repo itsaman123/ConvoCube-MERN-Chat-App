@@ -79,7 +79,7 @@ export default function SetAvatar() {
           <div className="avatars">
             {avatars.map((avatar, index) => {
               return (
-                <div
+                <div key={index}
                   className={`avatar ${
                     selectedAvatar === index ? "selected" : ""
                   }`}
