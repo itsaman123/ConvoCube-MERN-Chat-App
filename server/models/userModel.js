@@ -27,6 +27,30 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: "",
   },
-});
+  statusMessage: {
+    type: String,
+    default: "Hey I am using ChatApp",
+    maxLength: 150,
+  },
+  isOnline: {
+    type: Boolean,
+    default: false,
+  },
+  lastSeen: {
+    type: Date,
+    default: Date.now,
+  },
+  socketId: {
+    type: String,
+    default: "",
+  },
+  deviceTokens: [
+    {
+      type: String
+    }
+  ]
+
+
+}, { timestamps: true });
 
 module.exports = mongoose.model("Users", userSchema);
