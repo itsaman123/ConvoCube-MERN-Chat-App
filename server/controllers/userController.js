@@ -1,10 +1,10 @@
-const User = require("../models/userModel");
+const Users = require("../models/userModel");
 const bcrypt = require("bcrypt");
 
 module.exports.login = async (req, res, next) => {
   try {
     const { username, password } = req.body;
-    const user = await User.findOne({ username });
+    const user = await Users.findOne({ username });
     if (!user)
       return res.json({ msg: "Incorrect Username or Password", status: false });
     const isPasswordValid = await bcrypt.compare(password, user.password);
@@ -20,14 +20,14 @@ module.exports.login = async (req, res, next) => {
 module.exports.register = async (req, res, next) => {
   try {
     const { username, email, password } = req.body;
-    const usernameCheck = await User.findOne({ username });
+    const usernameCheck = await Users.findOne({ username });
     if (usernameCheck)
       return res.json({ msg: "Username already exist", status: false });
-    const emailCheck = await User.findOne({ email });
+    const emailCheck = await Users.findOne({ email });
     if (emailCheck)
       return res.json({ msg: "Email already exist", status: false });
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = await User.create({
+    const user = await Users.create({
       email,
       username,
       password: hashedPassword,
@@ -41,12 +41,13 @@ module.exports.register = async (req, res, next) => {
 
 module.exports.getAllUsers = async (req, res, next) => {
   try {
-    const users = await User.find({ _id: { $ne: req.params.id } }).select([
+    const { skip, limit } = req.query;
+    const users = await Users.find({ _id: { $ne: req.params.id } }).select([
       "email",
       "username",
       "avatarImage",
       "_id",
-    ]);
+    ]).skip(skip).limit(limit);
     return res.json(users);
   } catch (ex) {
     next(ex);
@@ -57,7 +58,7 @@ module.exports.setAvatar = async (req, res, next) => {
   try {
     const userId = req.params.id;
     const avatarImage = req.body.image;
-    const userData = await User.findByIdAndUpdate(
+    const userData = await Users.findByIdAndUpdate(
       userId,
       {
         isAvatarImageSet: true,
@@ -76,7 +77,7 @@ module.exports.setAvatar = async (req, res, next) => {
 
 module.exports.logOut = (req, res, next) => {
   try {
-    if (!req.params.id) return res.json({ msg: "User id is required " });
+    if (!req.params.id) return res.json({ msg: "Users id is required " });
     onlineUsers.delete(req.params.id);
     return res.status(200).send();
   } catch (ex) {
