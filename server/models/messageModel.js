@@ -38,7 +38,11 @@ const MessageSchema = mongoose.Schema(
         type: mongoose.Types.ObjectId,
         ref: "User"
       }
-    ]
+    ],
+    isPinned: {
+      type: boolean,
+      default: false
+    }
 
   },
   {

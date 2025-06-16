@@ -48,7 +48,11 @@ const userSchema = new mongoose.Schema({
     {
       type: String
     }
-  ]
+  ],
+  isPinned: {
+    type: boolean,
+    default: false
+  }
 
 
 }, { timestamps: true });

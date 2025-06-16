@@ -74,6 +74,8 @@ export default function ChatContainer({ currentChat, socket }) {
       <div className="chat-header">
         <div className="user-details">
           <UserAvatar image={currentChat.avatarImage} />
+          <UserAvatar image={currentChat.avatarImage} />
+          <UserAvatar image={currentChat.avatarImage} />
           <div className="username">
             <h3>{currentChat.username}</h3>
           </div>
