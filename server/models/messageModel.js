@@ -13,11 +13,9 @@ const MessageSchema = mongoose.Schema(
     },
     chatId: {
       type: String
-
     },
     senderId: {
       type: String
-
     },
     messageType: {
       type: String,
@@ -26,7 +24,6 @@ const MessageSchema = mongoose.Schema(
     },
     content: {
       type: String
-
     },
     replyTo: {
       type: mongoose.Schema.Types.ObjectId,
@@ -40,10 +37,22 @@ const MessageSchema = mongoose.Schema(
       }
     ],
     isPinned: {
-      type: boolean,
+      type: Boolean,
       default: false
+    },
+    status: {
+      type: String,
+      enum: ["sending", "sent", "delivered", "seen"],
+      default: "sending"
+    },
+    deliveredAt: {
+      type: Date,
+      default: null
+    },
+    seenAt: {
+      type: Date,
+      default: null
     }
-
   },
   {
     timestamps: true,

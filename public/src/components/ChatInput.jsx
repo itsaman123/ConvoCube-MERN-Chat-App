@@ -4,9 +4,10 @@ import { IoMdSend } from "react-icons/io";
 import styled from "styled-components";
 import Picker from "emoji-picker-react";
 
-export default function ChatInput({ handleSendMsg }) {
+export default function ChatInput({ handleSendMsg, onTyping }) {
   const [msg, setMsg] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+
   const handleEmojiPickerhideShow = () => {
     setShowEmojiPicker(!showEmojiPicker);
   };
@@ -15,6 +16,11 @@ export default function ChatInput({ handleSendMsg }) {
     let message = msg;
     message += emojiObject.emoji;
     setMsg(message);
+  };
+
+  const handleChange = (e) => {
+    setMsg(e.target.value);
+    onTyping();
   };
 
   const sendChat = (event) => {
@@ -37,7 +43,7 @@ export default function ChatInput({ handleSendMsg }) {
         <input
           type="text"
           placeholder="type your message here"
-          onChange={(e) => setMsg(e.target.value)}
+          onChange={handleChange}
           value={msg}
         />
         <button type="submit">
@@ -69,7 +75,6 @@ const Container = styled.div`
         font-size: 1.5rem;
         color: #ffff00c8;
         cursor: pointer;
-        
       }
       @media screen and (min-width: 390px) and (max-width: 719px) {
         svg {
@@ -77,11 +82,10 @@ const Container = styled.div`
           color: #ffff00c8;
           cursor: pointer;
           padding-right: .6rem;
-          overflow:hidden;
+          overflow: hidden;
         }
       }
       .emoji-picker-react {
-        
         position: absolute;
         top: -350px;
         background-color: #080420;
@@ -118,7 +122,6 @@ const Container = styled.div`
     background-color: #ffffff34;
     padding-left: rem;
     input {
-      
       width: 90%;
       height: 60%;
       background-color: transparent;
@@ -142,12 +145,11 @@ const Container = styled.div`
       align-items: center;
       background-color: #9a86f3;
       border: none;
-      cursor:pointer;
+      cursor: pointer;
       @media screen and (min-width: 720px) and (max-width: 1080px) {
         padding: 0.3rem 1rem;
         svg {
           font-size: 1rem;
-          
         }
       }
       svg {

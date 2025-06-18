@@ -50,7 +50,7 @@ const userSchema = new mongoose.Schema({
     }
   ],
   isPinned: {
-    type: boolean,
+    type: Boolean,
     default: false
   }
 

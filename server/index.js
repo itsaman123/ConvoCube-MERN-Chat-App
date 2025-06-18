@@ -40,8 +40,11 @@ const io = socket(server, {
 });
 
 global.onlineUsers = new Map();
+global.typingUsers = new Map();
+
 io.on("connection", (socket) => {
   global.chatSocket = socket;
+
   socket.on("add-user", (userId) => {
     onlineUsers.set(userId, socket.id);
   });
@@ -49,7 +52,60 @@ io.on("connection", (socket) => {
   socket.on("send-msg", (data) => {
     const sendUserSocket = onlineUsers.get(data.to);
     if (sendUserSocket) {
-      socket.to(sendUserSocket).emit("msg-recieve", data.msg);
+      socket.to(sendUserSocket).emit("msg-recieve", {
+        msg: data.msg,
+        from: data.from,
+        status: "sent"
+      });
+    }
+  });
+
+  socket.on("typing", (data) => {
+    const sendUserSocket = onlineUsers.get(data.to);
+    if (sendUserSocket) {
+      socket.to(sendUserSocket).emit("user-typing", {
+        from: data.from,
+        isTyping: data.isTyping
+      });
+    }
+  });
+
+  socket.on("stop-typing", (data) => {
+    const sendUserSocket = onlineUsers.get(data.to);
+    if (sendUserSocket) {
+      socket.to(sendUserSocket).emit("user-stopped-typing", {
+        from: data.from
+      });
+    }
+  });
+
+  socket.on("message-delivered", (data) => {
+    const sendUserSocket = onlineUsers.get(data.from);
+    if (sendUserSocket) {
+      socket.to(sendUserSocket).emit("msg-delivered", {
+        to: data.to,
+        messageId: data.messageId
+      });
+    }
+  });
+
+  socket.on("message-seen", (data) => {
+    const sendUserSocket = onlineUsers.get(data.from);
+    if (sendUserSocket) {
+      socket.to(sendUserSocket).emit("msg-seen", {
+        to: data.to,
+        messageId: data.messageId
+      });
+    }
+  });
+
+  socket.on("disconnect", () => {
+    // Remove user from online users when they disconnect
+    for (const [userId, socketId] of onlineUsers.entries()) {
+      if (socketId === socket.id) {
+        onlineUsers.delete(userId);
+        break;
+      }
     }
   });
 });
