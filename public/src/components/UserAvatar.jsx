@@ -22,7 +22,9 @@ const AvatarContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 2px solid #4e0eff;
+  border: 2.5px solid #00fff7;
+  background: #111;
+  box-shadow: 0 2px 8px 0 #00fff744;
 
   img {
     width: 100%;

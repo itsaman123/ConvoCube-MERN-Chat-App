@@ -25,12 +25,18 @@ const Container = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  color: white;
+  color: #00fff7;
   flex-direction: column;
+  background: #181818;
+  border-radius: 24px;
+  box-shadow: 0 8px 32px 0 #00fff733;
+  padding: 3rem 4rem;
   img {
     height: 20rem;
   }
   span {
-    color: #4e0eff;
+    color: #00fff7;
+    font-weight: 700;
+    letter-spacing: 2px;
   }
 `;

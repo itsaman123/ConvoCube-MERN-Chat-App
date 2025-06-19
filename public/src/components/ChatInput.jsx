@@ -58,8 +58,10 @@ const Container = styled.div`
   display: grid;
   align-items: center;
   grid-template-columns: 5% 95%;
-  background-color: #080420;
+  background: #111;
   padding: 0 2rem;
+  border-radius: 0 0 24px 24px;
+  box-shadow: 0 2px 8px 0 #00fff744;
   @media screen and (min-width: 720px) and (max-width: 1080px) {
     padding: 0 1rem;
     gap: 1rem;
@@ -67,19 +69,20 @@ const Container = styled.div`
   .button-container {
     display: flex;
     align-items: center;
-    color: white;
+    color: #00fff7;
     gap: 1rem;
     .emoji {
       position: relative;
       svg {
-        font-size: 1.5rem;
-        color: #ffff00c8;
+        font-size: 1.7rem;
+        color: #00fff7;
         cursor: pointer;
+        filter: drop-shadow(0 1px 2px #00fff744);
       }
       @media screen and (min-width: 390px) and (max-width: 719px) {
         svg {
           font-size: 1.5rem;
-          color: #ffff00c8;
+          color: #00fff7;
           cursor: pointer;
           padding-right: .6rem;
           overflow: hidden;
@@ -88,28 +91,9 @@ const Container = styled.div`
       .emoji-picker-react {
         position: absolute;
         top: -350px;
-        background-color: #080420;
-        box-shadow: 0 5px 10px #9a86f3;
-        border-color: #9a86f3;
-        .emoji-scroll-wrapper::-webkit-scrollbar {
-          background-color: #080420;
-          width: 5px;
-          &-thumb {
-            background-color: #9a86f3;
-          }
-        }
-        .emoji-categories {
-          button {
-            filter: contrast(0);
-          }
-        }
-        .emoji-search {
-          background-color: transparent;
-          border-color: #9a86f3;
-        }
-        .emoji-group:before {
-          background-color: #080420;
-        }
+        background-color: #181818;
+        box-shadow: 0 5px 10px #00fff7;
+        border-color: #00fff7;
       }
     }
   }
@@ -119,19 +103,19 @@ const Container = styled.div`
     display: flex;
     align-items: center;
     gap: 2rem;
-    background-color: #ffffff34;
-    padding-left: rem;
+    background: #181818;
+    box-shadow: 0 2px 8px 0 #00fff744;
     input {
       width: 90%;
       height: 60%;
-      background-color: transparent;
-      color: white;
+      background: transparent;
+      color: #00fff7;
       border: none;
       padding-left: 1rem;
       font-size: 1.2rem;
-
       &::selection {
-        background-color: #9a86f3;
+        background-color: #00fff7;
+        color: #111;
       }
       &:focus {
         outline: none;
@@ -143,9 +127,10 @@ const Container = styled.div`
       display: flex;
       justify-content: center;
       align-items: center;
-      background-color: #9a86f3;
+      background: linear-gradient(90deg, #00fff7 0%, #222 100%);
       border: none;
       cursor: pointer;
+      box-shadow: 0 2px 8px 0 #00fff744;
       @media screen and (min-width: 720px) and (max-width: 1080px) {
         padding: 0.3rem 1rem;
         svg {
@@ -154,7 +139,7 @@ const Container = styled.div`
       }
       svg {
         font-size: 2rem;
-        color: white;
+        color: #111;
       }
     }
   }

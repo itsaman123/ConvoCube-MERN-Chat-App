@@ -42,17 +42,32 @@ const Container = styled.div`
   align-items: center;
   justify-content: center;
   height: 100vh;
-  background: #292B36;
-  color: white;
+  background: #181818;
+  color: #00fff7;
+  border-radius: 24px;
+  box-shadow: 0 8px 32px 0 #00fff733;
   .profile-avatar {
     margin-bottom: 2rem;
+    box-shadow: 0 2px 8px 0 #00fff744;
+    border-radius: 50%;
+    background: #222;
+    padding: 1.5rem;
   }
   .profile-info {
     h2 {
       margin-bottom: 1rem;
+      color: #00fff7;
+      font-weight: 700;
+      letter-spacing: 2px;
     }
     p {
-      color: #bbb;
+      color: #00fff7;
+      font-size: 1.1rem;
+      background: #111;
+      padding: 0.7rem 1.2rem;
+      border-radius: 0.7rem;
+      margin-top: 0.5rem;
+      box-shadow: 0 1px 4px 0 #00fff744;
     }
   }
 `; 

@@ -123,8 +123,10 @@ export default function Contacts({ contacts, changeChat }) {
 const Container = styled.div`
   display: grid;
   grid-template-rows: 10% 75% 15%;
-  background-color:#292B36;
-
+  background: #181818;
+  border-radius: 20px 0 0 20px;
+  box-shadow: 0 4px 24px 0 #00fff733;
+  border-right: 2px solid #00fff7;
   overflow: hidden;
   .brand {
     display: flex;
@@ -135,8 +137,10 @@ const Container = styled.div`
       height: 2rem;
     }
     h3 {
-      color: white;
+      color: #00fff7;
       text-transform: uppercase;
+      letter-spacing: 2px;
+      font-weight: 700;
     }
   }
   @media screen and (min-width: 390px) and (max-width: 719px) {
@@ -156,7 +160,7 @@ const Container = styled.div`
     &::-webkit-scrollbar {
       width: 0.2rem;
       &-thumb {
-        background-color: #ffffff39;
+        background-color: #00fff7;
         width: 0.1rem;
         border-radius: 1rem;
       }
@@ -164,27 +168,27 @@ const Container = styled.div`
     .section {
       width: 100%;
       h4 {
-        color: #ffffff80;
+        color: #00fff7;
         font-size: 0.8rem;
         margin: 0.5rem 1rem;
         text-transform: uppercase;
+        letter-spacing: 1px;
       }
     }
     .contact {
-      background-color: #3E404B;
+      background: #222;
       min-height: 3.2rem;
       cursor: pointer;
       width: 90%;
-      
-      border: 0.07rem solid #1e403b;
-      border-radius: 0.31rem;
-      
+      border: 0.07rem solid #00fff7;
+      border-radius: 1rem;
       display: flex;
-      gap: .2rem;
+      gap: .7rem;
       overflow:hidden;
       align-items: center;
-      transition: 0.5s ease-in-out;
+      transition: 0.2s box-shadow, 0.2s background;
       position: relative;
+      box-shadow: 0 2px 8px 0 #00fff722;
       .avatar {
         img {
           height: 2.5rem;
@@ -192,58 +196,51 @@ const Container = styled.div`
       }
       .username {
         h3 {
-          color: white;
-          font-size: .8rem;
+          color: #00fff7;
+          font-size: .95rem;
         }
-      }
-      @media screen and (min-width: 390px) and (max-width: 719px) {
-        .username {
-          h3 {
-            color: white;
-            font-size: .6rem;
-            padding-left: .1rem;
-          }
-        }
-
       }
       &:hover {
-        .pin-button {
-          opacity: 1;
-        }
+        background: #111;
+        box-shadow: 0 4px 16px 0 #00fff744;
       }
       .pin-button {
         position: absolute;
         right: 0.5rem;
         background: none;
         border: none;
-        color: #ffffff80;
+        color: #00fff7;
         cursor: pointer;
         opacity: 0;
         transition: opacity 0.3s ease;
         padding: 0.5rem;
-        
         svg {
           font-size: 1rem;
           &.pinned {
-            color: #1B90FF;
+            color: #00fff7;
             transform: rotate(45deg);
           }
         }
       }
+      &:hover .pin-button {
+        opacity: 1;
+      }
     }
-    
     .selected {
-      background-color: #1B90FF;
+      background: linear-gradient(90deg, #00fff7 0%, #222 100%);
+      color: #111;
+      .username h3 {
+        color: #111;
+      }
     }
   }
-
   .current-user {
-    background-color: #111c1a;
+    background: #111;
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 1rem;
-    float:left;
+    border-radius: 0 0 20px 20px;
     .avatar {
       img {
         height: 4rem;
@@ -252,7 +249,8 @@ const Container = styled.div`
     }
     .username {
       h2 {
-        color: white;
+        color: #00fff7;
+        font-size: 1.2rem;
       }
     }
     @media screen and (min-width: 720px) and (max-width: 1080px) {

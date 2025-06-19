@@ -205,6 +205,9 @@ const Container = styled.div`
   grid-template-rows: 10% 80% 10%;
   gap: 0.1rem;
   overflow: hidden;
+  background: #181818;
+  border-radius: 0 24px 24px 0;
+  box-shadow: 0 8px 32px 0 #00fff733;
 
   @media screen and (min-width: 720px) and (max-width: 1080px) {
     grid-template-rows: 15% 70% 15%;
@@ -215,6 +218,8 @@ const Container = styled.div`
     justify-content: space-between;
     align-items: center;
     padding: 0 2rem;
+    background: #111;
+    border-radius: 0 24px 0 0;
     .user-details {
       display: flex;
       align-items: center;
@@ -226,10 +231,11 @@ const Container = styled.div`
       }
       .username {
         h3 {
-          color: white;
+          color: #00fff7;
+          font-weight: 700;
         }
         .typing-indicator {
-          color: #ffffff80;
+          color: #00fff7;
           font-size: 0.8rem;
           font-style: italic;
         }
@@ -238,15 +244,15 @@ const Container = styled.div`
   }
 
   .chat-messages {
-    padding: 1rem 2rem;
+    padding: 1.5rem 2.5rem;
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 1.2rem;
     overflow: auto;
     &::-webkit-scrollbar {
       width: 0.2rem;
       &-thumb {
-        background-color: #ffffff39;
+        background-color: #00fff7;
         width: 0.1rem;
         border-radius: 1rem;
       }
@@ -255,14 +261,14 @@ const Container = styled.div`
       display: flex;
       align-items: center;
       .content {
-        max-width: 40%;
+        max-width: 48%;
         overflow-wrap: break-word;
-        padding: 1rem;
+        padding: 1.1rem 1.5rem;
         font-size: 1.1rem;
-        border-radius: 1rem;
-        color: #d1d1d1;
+        border-radius: 1.5rem;
+        color: #00fff7;
         position: relative;
-        
+        box-shadow: 0 2px 8px 0 #00fff722;
         .message-status {
           position: absolute;
           bottom: -15px;
@@ -271,23 +277,20 @@ const Container = styled.div`
           display: flex;
           align-items: center;
           gap: 0.2rem;
-
           .status {
-            color: #ffffff80;
+            color: #00fff7;
             &.sending {
               font-style: italic;
             }
           }
-
           .status-icon {
             font-size: 0.8rem;
-            color: #ffffff80;
+            color: #00fff7;
             &.seen {
-              color: #1B90FF;
+              color: #00fff7;
             }
           }
         }
-
         @media screen and (min-width: 720px) and (max-width: 1080px) {
           max-width: 70%;
         }
@@ -296,13 +299,17 @@ const Container = styled.div`
     .sended {
       justify-content: flex-end;
       .content {
-        background-color: #4f04ff21;
+        background: linear-gradient(90deg, #00fff7 0%, #222 100%);
+        color: #111;
+        border-bottom-right-radius: 0.5rem;
       }
     }
     .recieved {
       justify-content: flex-start;
       .content {
-        background-color: #9900ff20;
+        background: #222;
+        color: #00fff7;
+        border-bottom-left-radius: 0.5rem;
       }
     }
   }

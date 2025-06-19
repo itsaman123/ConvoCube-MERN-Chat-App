@@ -70,17 +70,20 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  background-color:#292B36;
+  background: transparent;
   gap: 1rem;
   align-items: center;
 
   .container {
     height: 99vh;
     width: 98vw;
-  background-color:#3E404B;
-
+    background: #181818;
+    box-shadow: 0 8px 32px 0 #00fff733;
+    border-radius: 24px;
     display: grid;
     grid-template-columns: 25% 75%;
+    border: 1.5px solid #00fff7;
+    backdrop-filter: blur(8px);
     @media screen and (min-width: 720px) and (max-width: 1080px) {
       grid-template-columns: 45% 55%;
     }

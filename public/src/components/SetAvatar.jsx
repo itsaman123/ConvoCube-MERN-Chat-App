@@ -130,7 +130,7 @@ const Container = styled.div`
   align-items: center;
   flex-direction: column;
   gap: 3rem;
-  background-color: #131324;
+  background: #111;
   height: 100vh;
   width: 100vw;
 
@@ -140,7 +140,9 @@ const Container = styled.div`
 
   .title-container {
     h1 {
-      color: white;
+      color: #00fff7;
+      font-weight: 700;
+      letter-spacing: 2px;
     }
   }
   .avatars {
@@ -154,30 +156,35 @@ const Container = styled.div`
       display: flex;
       justify-content: center;
       align-items: center;
-      transition: 0.5s ease-in-out;
+      transition: 0.3s box-shadow, 0.3s border;
       cursor: pointer;
+      background: #222;
+      box-shadow: 0 2px 8px 0 #00fff744;
 
       img {
         height: 6rem;
-        transition: 0.5s ease-in-out;
+        transition: 0.3s box-shadow, 0.3s border;
       }
     }
     .selected {
-      border: 0.4rem solid #4e0eff;
+      border: 0.4rem solid #00fff7;
+      box-shadow: 0 4px 16px 0 #00fff744;
     }
   }
   .submit-btn {
-    background-color: #4e0eff;
-    color: white;
+    background: linear-gradient(90deg, #00fff7 0%, #222 100%);
+    color: #111;
     padding: 1rem 2rem;
     border: none;
     font-weight: bold;
     cursor: pointer;
-    border-radius: 0.4rem;
+    border-radius: 0.7rem;
     font-size: 1rem;
     text-transform: uppercase;
+    box-shadow: 0 2px 8px 0 #00fff744;
+    transition: background 0.2s;
     &:hover {
-      background-color: #3e0edf;
+      background: linear-gradient(90deg, #222 0%, #00fff7 100%);
     }
   }
 `;
