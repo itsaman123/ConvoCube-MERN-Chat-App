@@ -84,3 +84,18 @@ module.exports.logOut = (req, res, next) => {
     next(ex);
   }
 };
+
+module.exports.getUserById = async (req, res, next) => {
+  try {
+    const user = await Users.findById(req.params.id).select([
+      "email",
+      "username",
+      "avatarImage",
+      "_id"
+    ]);
+    if (!user) return res.status(404).json({ msg: "User not found" });
+    return res.json(user);
+  } catch (ex) {
+    next(ex);
+  }
+};

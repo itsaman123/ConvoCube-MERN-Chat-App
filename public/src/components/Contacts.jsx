@@ -5,6 +5,7 @@ import UserAvatar from "./UserAvatar";
 import { FaThumbtack } from "react-icons/fa";
 import axios from "axios";
 import { host } from "../utils/APIRoutes";
+import { useNavigate } from "react-router-dom";
 
 export default function Contacts({ contacts, changeChat }) {
   const [currentUserName, setCurrentUserName] = useState(undefined);
@@ -12,6 +13,7 @@ export default function Contacts({ contacts, changeChat }) {
   const [currentSelected, setCurrentSelected] = useState(undefined);
   const [pinnedContacts, setPinnedContacts] = useState([]);
   const [unpinnedContacts, setUnpinnedContacts] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(async () => {
     const data = await JSON.parse(
@@ -35,7 +37,7 @@ export default function Contacts({ contacts, changeChat }) {
   };
 
   const handlePinToggle = async (e, contact) => {
-    e.stopPropagation(); // Prevent chat selection when clicking pin button
+    e.stopPropagation();
     try {
       const data = await JSON.parse(
         localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)
@@ -44,16 +46,13 @@ export default function Contacts({ contacts, changeChat }) {
         userId: contact._id,
         contactId: data._id
       });
-
-      // Update the contact's pin status in the local state
+      console.log(response);
       const updatedContacts = contacts.map(c => {
         if (c._id === contact._id) {
           return { ...c, isPinned: response.data.isPinned };
         }
         return c;
       });
-
-      // Update pinned and unpinned lists
       const pinned = updatedContacts.filter(c => c.isPinned);
       const unpinned = updatedContacts.filter(c => !c.isPinned);
       setPinnedContacts(pinned);
@@ -61,6 +60,11 @@ export default function Contacts({ contacts, changeChat }) {
     } catch (error) {
       console.error("Error toggling pin status:", error);
     }
+  };
+
+  const handleCurrentUserProfile = () => {
+    const data = JSON.parse(localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY));
+    navigate(`/profile/${data._id}`);
   };
 
   const renderContact = (contact, index) => (
@@ -105,7 +109,7 @@ export default function Contacts({ contacts, changeChat }) {
             )}
           </div>
           <div className="current-user">
-            <UserAvatar image={currentUserImage} />
+            <UserAvatar image={currentUserImage} onClick={handleCurrentUserProfile} />
             <div className="username">
               <h2>{currentUserName}</h2>
             </div>

@@ -7,6 +7,7 @@ import axios from "axios";
 import { sendMessageRoute, recieveMessageRoute } from "../utils/APIRoutes";
 import UserAvatar from "./UserAvatar";
 import { FaCheck, FaCheckDouble } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 export default function ChatContainer({ currentChat, socket }) {
   const [messages, setMessages] = useState([]);
@@ -15,6 +16,7 @@ export default function ChatContainer({ currentChat, socket }) {
   const scrollRef = useRef();
   const [arrivalMessage, setArrivalMessage] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(async () => {
     const data = await JSON.parse(
@@ -66,8 +68,8 @@ export default function ChatContainer({ currentChat, socket }) {
   }, [currentChat]);
 
   const updateMessageStatus = (messageId, status) => {
-    setMessages(prevMessages => 
-      prevMessages.map(msg => 
+    setMessages(prevMessages =>
+      prevMessages.map(msg =>
         msg._id === messageId ? { ...msg, status } : msg
       )
     );
@@ -77,7 +79,7 @@ export default function ChatContainer({ currentChat, socket }) {
     const data = await JSON.parse(
       localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)
     );
-    
+
     const messageId = uuidv4();
     socket.current.emit("send-msg", {
       to: currentChat._id,
@@ -94,11 +96,11 @@ export default function ChatContainer({ currentChat, socket }) {
     });
 
     const msgs = [...messages];
-    msgs.push({ 
-      fromSelf: true, 
-      message: msg, 
+    msgs.push({
+      fromSelf: true,
+      message: msg,
       status: "sending",
-      _id: messageId 
+      _id: messageId
     });
     setMessages(msgs);
 
@@ -156,11 +158,15 @@ export default function ChatContainer({ currentChat, socket }) {
     }
   };
 
+  const handleChatUserProfile = () => {
+    navigate(`/profile/${currentChat._id}`);
+  };
+
   return (
     <Container>
       <div className="chat-header">
         <div className="user-details">
-          <UserAvatar image={currentChat.avatarImage} />
+          <UserAvatar image={currentChat.avatarImage} onClick={handleChatUserProfile} />
           <div className="username">
             <h3>{currentChat.username}</h3>
             {isTyping && <span className="typing-indicator">typing...</span>}
@@ -173,9 +179,8 @@ export default function ChatContainer({ currentChat, socket }) {
           return (
             <div ref={scrollRef} key={message._id || uuidv4()}>
               <div
-                className={`message ${
-                  message.fromSelf ? "sended" : "recieved"
-                }`}
+                className={`message ${message.fromSelf ? "sended" : "recieved"
+                  }`}
               >
                 <div className="content">
                   <p>{message.message}</p>

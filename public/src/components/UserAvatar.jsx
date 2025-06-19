@@ -1,9 +1,14 @@
 import React from "react";
 import styled from "styled-components";
 
-const UserAvatar = ({ image }) => {
+const UserAvatar = ({ image, onClick }) => {
   return (
-    <AvatarContainer>
+    <AvatarContainer
+      onClick={onClick}
+      tabIndex={onClick ? 0 : undefined}
+      style={onClick ? { cursor: "pointer" } : {}}
+      aria-label={onClick ? "View profile" : undefined}
+    >
       <img src={image} alt="avatar" />
     </AvatarContainer>
   );
