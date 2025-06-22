@@ -8,3 +8,5 @@ export const sendMessageRoute = `${host}/api/messages/addmsg`;
 export const recieveMessageRoute = `${host}/api/messages/getmsg`;
 export const setAvatarRoute = `${host}/api/auth/setavatar`;
 export const togglePinRoute = `${host}/api/messages/togglepin`;
+export const createGroupRoute = `${host}/api/auth/group`;
+export const getUserGroupsRoute = `${host}/api/auth/groups`;

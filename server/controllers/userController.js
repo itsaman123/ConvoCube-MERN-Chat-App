@@ -1,5 +1,6 @@
 const Users = require("../models/userModel");
 const bcrypt = require("bcrypt");
+const Group = require('../models/groupModel');
 
 module.exports.login = async (req, res, next) => {
   try {
@@ -97,5 +98,37 @@ module.exports.getUserById = async (req, res, next) => {
     return res.json(user);
   } catch (ex) {
     next(ex);
+  }
+};
+
+// Create Group Controller
+module.exports.createGroup = async (req, res, next) => {
+  try {
+    const { name, members, avatar, createdBy } = req.body;
+    if (!name || !members || !createdBy) {
+      return res.status(400).json({ msg: 'Missing required fields' });
+    }
+    const group = await Group.create({
+      name,
+      members,
+      avatar: avatar || '',
+      createdBy,
+    });
+    return res.status(201).json(group);
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Get Groups for a User
+module.exports.getUserGroups = async (req, res, next) => {
+  try {
+    const userId = req.params.id;
+    const groups = await Group.find({ members: userId })
+      .select(["_id", "name", "avatar", "members"])
+      .lean();
+    return res.json(groups);
+  } catch (error) {
+    next(error);
   }
 };

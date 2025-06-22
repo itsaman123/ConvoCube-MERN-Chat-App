@@ -4,7 +4,7 @@ import Logo from "../assets/logo.png";
 import UserAvatar from "./UserAvatar";
 import { FaThumbtack } from "react-icons/fa";
 import axios from "axios";
-import { host } from "../utils/APIRoutes";
+import { host, createGroupRoute, getUserGroupsRoute } from "../utils/APIRoutes";
 import { useNavigate } from "react-router-dom";
 
 export default function Contacts({ contacts, changeChat }) {
@@ -13,6 +13,11 @@ export default function Contacts({ contacts, changeChat }) {
   const [currentSelected, setCurrentSelected] = useState(undefined);
   const [pinnedContacts, setPinnedContacts] = useState([]);
   const [unpinnedContacts, setUnpinnedContacts] = useState([]);
+  const [showCreateGroup, setShowCreateGroup] = useState(false);
+  const [groupName, setGroupName] = useState("");
+  const [creatingGroup, setCreatingGroup] = useState(false);
+  const [selectedMembers, setSelectedMembers] = useState([]);
+  const [groups, setGroups] = useState([]);
   const navigate = useNavigate();
 
   useEffect(async () => {
@@ -31,6 +36,20 @@ export default function Contacts({ contacts, changeChat }) {
     setUnpinnedContacts(unpinned);
   }, [contacts]);
 
+  useEffect(() => {
+    const fetchGroups = async () => {
+      const user = JSON.parse(localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY));
+      if (!user) return;
+      try {
+        const res = await axios.get(`${getUserGroupsRoute}/${user._id}`);
+        setGroups(res.data || []);
+      } catch (err) {
+        setGroups([]);
+      }
+    };
+    fetchGroups();
+  }, []);
+
   const changeCurrentChat = (index, contact) => {
     setCurrentSelected(index);
     changeChat(contact);
@@ -46,7 +65,6 @@ export default function Contacts({ contacts, changeChat }) {
         userId: contact._id,
         contactId: data._id
       });
-      console.log(response);
       const updatedContacts = contacts.map(c => {
         if (c._id === contact._id) {
           return { ...c, isPinned: response.data.isPinned };
@@ -65,6 +83,36 @@ export default function Contacts({ contacts, changeChat }) {
   const handleCurrentUserProfile = () => {
     const data = JSON.parse(localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY));
     navigate(`/profile/${data._id}`);
+  };
+
+  const handleToggleMember = (id) => {
+    setSelectedMembers((prev) =>
+      prev.includes(id) ? prev.filter((uid) => uid !== id) : [...prev, id]
+    );
+  };
+
+  const handleCreateGroup = async () => {
+    if (!groupName.trim() || selectedMembers.length === 0) return;
+    setCreatingGroup(true);
+    try {
+      const user = JSON.parse(localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY));
+      const res = await axios.post(createGroupRoute, {
+        name: groupName,
+        members: [user._id, ...selectedMembers],
+        createdBy: user._id,
+        avatar: "",
+      });
+      setShowCreateGroup(false);
+      setGroupName("");
+      setSelectedMembers([]);
+      // Refresh groups after creation
+      const groupRes = await axios.get(`${getUserGroupsRoute}/${user._id}`);
+      setGroups(groupRes.data || []);
+    } catch (err) {
+      alert("Failed to create group");
+    } finally {
+      setCreatingGroup(false);
+    }
   };
 
   const renderContact = (contact, index) => (
@@ -86,15 +134,58 @@ export default function Contacts({ contacts, changeChat }) {
     </div>
   );
 
+  const renderGroup = (group, index) => (
+    <div
+      key={group._id}
+      className="contact"
+      onClick={() => changeCurrentChat(index, { ...group, isGroup: true })}
+      style={{ background: '#222', border: '0.07rem solid #00fff7', borderRadius: '1rem', marginBottom: '0.5rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '.7rem', padding: '0.5rem 1rem' }}
+    >
+      <UserAvatar image={group.avatar || Logo} />
+      <div className="username">
+        <h3>{group.name}</h3>
+      </div>
+      <span style={{ color: '#00fff7', fontSize: '0.8rem', marginLeft: 'auto', fontWeight: 600 }}>Group</span>
+    </div>
+  );
+
   return (
     <>
       {currentUserImage && currentUserImage && (
         <Container>
-          <div className="brand">
+          <div className="brand" style={{ position: 'relative' }}>
             <img src={Logo} alt="logo" />
             <h3>Convocube</h3>
+            <button
+              style={{
+                position: 'absolute',
+                right: '0.5rem',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                background: 'linear-gradient(90deg, #00fff7 0%, #222 100%)',
+                color: '#111',
+                padding: '0.3rem 0.7rem',
+                border: 'none',
+                borderRadius: '0.5rem',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+                fontSize: '0.85rem',
+                boxShadow: '0 2px 8px 0 #00fff744',
+                textTransform: 'uppercase',
+                zIndex: 2,
+              }}
+              onClick={() => setShowCreateGroup(true)}
+            >
+              + Group
+            </button>
           </div>
           <div className="contacts">
+            {groups.length > 0 && (
+              <div className="section">
+                <h4>Groups</h4>
+                {groups.map((group, index) => renderGroup(group, index))}
+              </div>
+            )}
             {pinnedContacts.length > 0 && (
               <div className="section">
                 <h4>Pinned Chats</h4>
@@ -108,6 +199,108 @@ export default function Contacts({ contacts, changeChat }) {
               </div>
             )}
           </div>
+          {showCreateGroup && (
+            <div style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              width: '100vw',
+              height: '100vh',
+              background: 'rgba(0,0,0,0.5)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              zIndex: 1000,
+            }}>
+              <div style={{
+                background: '#181818',
+                padding: '2rem',
+                borderRadius: '1rem',
+                minWidth: '320px',
+                boxShadow: '0 4px 24px 0 #00fff733',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '1rem',
+                alignItems: 'center',
+                maxHeight: '80vh',
+                overflowY: 'auto',
+              }}>
+                <h2 style={{ color: '#00fff7', marginBottom: '1rem' }}>Create Group</h2>
+                <input
+                  type="text"
+                  placeholder="Group Name"
+                  value={groupName}
+                  onChange={e => setGroupName(e.target.value)}
+                  style={{
+                    padding: '0.7rem',
+                    borderRadius: '0.5rem',
+                    border: '1px solid #00fff7',
+                    background: '#222',
+                    color: '#00fff7',
+                    width: '100%',
+                  }}
+                  disabled={creatingGroup}
+                />
+                <div style={{ width: '100%', margin: '1rem 0' }}>
+                  <div style={{ color: '#00fff7', marginBottom: '0.5rem', fontWeight: 600 }}>Select Members:</div>
+                  <div style={{ maxHeight: '180px', overflowY: 'auto', background: '#222', borderRadius: '0.5rem', padding: '0.5rem' }}>
+                    {unpinnedContacts.concat(pinnedContacts).map((contact) => (
+                      <label key={contact._id} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#00fff7', marginBottom: '0.3rem', cursor: 'pointer' }}>
+                        <input
+                          type="checkbox"
+                          checked={selectedMembers.includes(contact._id)}
+                          onChange={() => handleToggleMember(contact._id)}
+                          disabled={creatingGroup}
+                          style={{ accentColor: '#00fff7' }}
+                        />
+                        <UserAvatar image={contact.avatarImage} />
+                        <span>{contact.username}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+                <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
+                  <button
+                    style={{
+                      background: 'linear-gradient(90deg, #00fff7 0%, #222 100%)',
+                      color: '#111',
+                      padding: '0.7rem 1.5rem',
+                      border: 'none',
+                      borderRadius: '0.7rem',
+                      fontWeight: 'bold',
+                      cursor: selectedMembers.length === 0 || creatingGroup ? 'not-allowed' : 'pointer',
+                      fontSize: '1rem',
+                      boxShadow: '0 2px 8px 0 #00fff744',
+                      textTransform: 'uppercase',
+                      opacity: creatingGroup || selectedMembers.length === 0 ? 0.7 : 1,
+                    }}
+                    onClick={handleCreateGroup}
+                    disabled={creatingGroup || selectedMembers.length === 0}
+                  >
+                    {creatingGroup ? 'Creating...' : 'Create'}
+                  </button>
+                  <button
+                    style={{
+                      background: '#222',
+                      color: '#00fff7',
+                      padding: '0.7rem 1.5rem',
+                      border: '1px solid #00fff7',
+                      borderRadius: '0.7rem',
+                      fontWeight: 'bold',
+                      cursor: 'pointer',
+                      fontSize: '1rem',
+                      boxShadow: '0 2px 8px 0 #00fff744',
+                      textTransform: 'uppercase',
+                    }}
+                    onClick={() => { setShowCreateGroup(false); setGroupName(""); setSelectedMembers([]); }}
+                    disabled={creatingGroup}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
           <div className="current-user">
             <UserAvatar image={currentUserImage} onClick={handleCurrentUserProfile} />
             <div className="username">
