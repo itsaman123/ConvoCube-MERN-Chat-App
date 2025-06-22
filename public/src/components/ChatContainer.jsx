@@ -18,52 +18,72 @@ export default function ChatContainer({ currentChat, socket }) {
   const [currentUser, setCurrentUser] = useState(null);
   const navigate = useNavigate();
 
-  useEffect(async () => {
-    const data = await JSON.parse(
-      localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)
-    );
-    setCurrentUser(data);
-    const response = await axios.post(recieveMessageRoute, {
-      from: data._id,
-      to: currentChat._id,
-    });
-    setMessages(response.data);
+  useEffect(() => {
+    const fetchMessages = async () => {
+      const data = await JSON.parse(
+        localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)
+      );
+      setCurrentUser(data);
+      const response = await axios.post(recieveMessageRoute, {
+        from: data._id,
+        to: currentChat._id,
+      });
+      setMessages(response.data);
+    };
+    fetchMessages();
   }, [currentChat]);
 
   useEffect(() => {
     if (socket.current) {
-      socket.current.on("msg-recieve", (data) => {
+      const handleMsgReceive = (data) => {
         setArrivalMessage({
           fromSelf: false,
           message: data.msg,
           status: data.status,
           from: data.from
         });
-      });
+      };
 
-      socket.current.on("user-typing", (data) => {
+      const handleUserTyping = (data) => {
         if (data.from === currentChat._id) {
           setIsTyping(true);
         }
-      });
+      };
 
-      socket.current.on("user-stopped-typing", (data) => {
+      const handleUserStoppedTyping = (data) => {
         if (data.from === currentChat._id) {
           setIsTyping(false);
         }
-      });
+      };
 
-      socket.current.on("msg-delivered", (data) => {
+      const handleMsgDelivered = (data) => {
         if (data.to === currentChat._id) {
           updateMessageStatus(data.messageId, "delivered");
         }
-      });
+      };
 
-      socket.current.on("msg-seen", (data) => {
+      const handleMsgSeen = (data) => {
         if (data.to === currentChat._id) {
           updateMessageStatus(data.messageId, "seen");
         }
-      });
+      };
+
+      socket.current.on("msg-recieve", handleMsgReceive);
+      socket.current.on("user-typing", handleUserTyping);
+      socket.current.on("user-stopped-typing", handleUserStoppedTyping);
+      socket.current.on("msg-delivered", handleMsgDelivered);
+      socket.current.on("msg-seen", handleMsgSeen);
+
+      // Cleanup function
+      return () => {
+        if (socket.current) {
+          socket.current.off("msg-recieve", handleMsgReceive);
+          socket.current.off("user-typing", handleUserTyping);
+          socket.current.off("user-stopped-typing", handleUserStoppedTyping);
+          socket.current.off("msg-delivered", handleMsgDelivered);
+          socket.current.off("msg-seen", handleMsgSeen);
+        }
+      };
     }
   }, [currentChat]);
 
@@ -161,6 +181,15 @@ export default function ChatContainer({ currentChat, socket }) {
   const handleChatUserProfile = () => {
     navigate(`/profile/${currentChat._id}`);
   };
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (typingTimeout) {
+        clearTimeout(typingTimeout);
+      }
+    };
+  }, [typingTimeout]);
 
   return (
     <Container>
