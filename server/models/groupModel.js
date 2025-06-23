@@ -8,7 +8,7 @@ const groupSchema = new mongoose.Schema({
     members: [
         {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'User',
+            ref: 'Users',
             required: true,
         },
     ],
@@ -18,7 +18,7 @@ const groupSchema = new mongoose.Schema({
     },
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
+        ref: 'Users',
         required: true,
     },
 }, { timestamps: true });

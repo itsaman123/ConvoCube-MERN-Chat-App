@@ -126,6 +126,7 @@ module.exports.getUserGroups = async (req, res, next) => {
     const userId = req.params.id;
     const groups = await Group.find({ members: userId })
       .select(["_id", "name", "avatar", "members"])
+      .populate('members', 'username avatarImage _id')
       .lean();
     return res.json(groups);
   } catch (error) {

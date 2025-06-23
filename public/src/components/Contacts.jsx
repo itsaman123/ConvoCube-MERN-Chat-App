@@ -11,13 +11,13 @@ export default function Contacts({ contacts, changeChat }) {
   const [currentUserName, setCurrentUserName] = useState(undefined);
   const [currentUserImage, setCurrentUserImage] = useState(undefined);
   const [currentSelected, setCurrentSelected] = useState(undefined);
-  const [pinnedContacts, setPinnedContacts] = useState([]);
-  const [unpinnedContacts, setUnpinnedContacts] = useState([]);
+  const [allChats, setAllChats] = useState([]);
   const [showCreateGroup, setShowCreateGroup] = useState(false);
   const [groupName, setGroupName] = useState("");
   const [creatingGroup, setCreatingGroup] = useState(false);
   const [selectedMembers, setSelectedMembers] = useState([]);
   const [groups, setGroups] = useState([]);
+  const [pinnedChats, setPinnedChats] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -27,17 +27,10 @@ export default function Contacts({ contacts, changeChat }) {
       );
       setCurrentUserName(data.username);
       setCurrentUserImage(data.avatarImage);
+      setPinnedChats(data.pinnedChats || []);
     };
     fetchUserData();
   }, []);
-
-  useEffect(() => {
-    // Separate contacts into pinned and unpinned
-    const pinned = contacts.filter(contact => contact.isPinned);
-    const unpinned = contacts.filter(contact => !contact.isPinned);
-    setPinnedContacts(pinned);
-    setUnpinnedContacts(unpinned);
-  }, [contacts]);
 
   useEffect(() => {
     const fetchGroups = async () => {
@@ -53,31 +46,61 @@ export default function Contacts({ contacts, changeChat }) {
     fetchGroups();
   }, []);
 
+  useEffect(() => {
+    // Merge contacts and groups into a single list
+    const groupChats = groups.map(g => ({
+      ...g,
+      isGroup: true,
+      avatarImage: g.avatar || Logo,
+      username: g.name,
+      members: g.members,
+      chatId: g._id,
+      chatType: 'group',
+    }));
+    const individualChats = contacts.map(c => ({
+      ...c,
+      isGroup: false,
+      chatId: c._id,
+      chatType: 'user',
+    }));
+    const merged = [...groupChats, ...individualChats];
+    // Mark pinned status
+    const user = JSON.parse(localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY));
+    const pinned = (user?.pinnedChats || []);
+    merged.forEach(chat => {
+      chat.isPinned = pinned.some(p => p.chatId === chat.chatId && p.type === chat.chatType);
+    });
+    // Sort: pinned first, then recent
+    merged.sort((a, b) => (b.isPinned - a.isPinned));
+    setAllChats(merged);
+  }, [contacts, groups]);
+
   const changeCurrentChat = (index, contact) => {
     setCurrentSelected(index);
     changeChat(contact);
   };
 
-  const handlePinToggle = async (e, contact) => {
+  const handlePinToggle = async (e, chat) => {
     e.stopPropagation();
     try {
       const data = await JSON.parse(
         localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)
       );
       const response = await axios.post(`${host}/api/messages/togglepin`, {
-        userId: contact._id,
-        contactId: data._id
+        userId: data._id,
+        chatId: chat.chatId,
+        chatType: chat.chatType
       });
-      const updatedContacts = contacts.map(c => {
-        if (c._id === contact._id) {
-          return { ...c, isPinned: response.data.isPinned };
-        }
-        return c;
-      });
-      const pinned = updatedContacts.filter(c => c.isPinned);
-      const unpinned = updatedContacts.filter(c => !c.isPinned);
-      setPinnedContacts(pinned);
-      setUnpinnedContacts(unpinned);
+      // Update pinnedChats in localStorage and state
+      data.pinnedChats = response.data.pinnedChats;
+      localStorage.setItem(process.env.REACT_APP_LOCALHOST_KEY, JSON.stringify(data));
+      setPinnedChats(response.data.pinnedChats);
+      // Update allChats to reflect new pin status
+      setAllChats(prev => prev.map(c =>
+        c.chatId === chat.chatId && c.chatType === chat.chatType
+          ? { ...c, isPinned: response.data.isPinned }
+          : c
+      ).sort((a, b) => (b.isPinned - a.isPinned)));
     } catch (error) {
       console.error("Error toggling pin status:", error);
     }
@@ -111,6 +134,17 @@ export default function Contacts({ contacts, changeChat }) {
       // Refresh groups after creation
       const groupRes = await axios.get(`${getUserGroupsRoute}/${user._id}`);
       setGroups(groupRes.data || []);
+      // Auto-select the new group
+      if (groupRes.data && groupRes.data.length > 0) {
+        const newGroup = groupRes.data[groupRes.data.length - 1];
+        changeCurrentChat(groups.length, {
+          ...newGroup,
+          isGroup: true,
+          avatarImage: newGroup.avatar || Logo,
+          username: newGroup.name,
+          members: newGroup.members,
+        });
+      }
     } catch (err) {
       alert("Failed to create group");
     } finally {
@@ -118,43 +152,30 @@ export default function Contacts({ contacts, changeChat }) {
     }
   };
 
-  const renderContact = (contact, index) => (
+  const renderChat = (chat, index) => (
     <div
-      key={contact._id}
+      key={chat.chatId}
       className={`contact ${index === currentSelected ? "selected" : ""}`}
-      onClick={() => changeCurrentChat(index, contact)}
+      onClick={() => changeCurrentChat(index, chat)}
     >
-      <UserAvatar image={contact.avatarImage} />
+      <UserAvatar image={chat.avatarImage} />
       <div className="username">
-        <h3>{contact.username}</h3>
+        <h3>{chat.isGroup ? chat.username : chat.username}</h3>
       </div>
       <button
         className="pin-button"
-        onClick={(e) => handlePinToggle(e, contact)}
+        onClick={(e) => handlePinToggle(e, chat)}
+        title={chat.isPinned ? "Unpin" : "Pin"}
       >
-        <FaThumbtack className={contact.isPinned ? "pinned" : ""} />
+        <FaThumbtack className={chat.isPinned ? "pinned" : ""} />
       </button>
-    </div>
-  );
-
-  const renderGroup = (group, index) => (
-    <div
-      key={group._id}
-      className="contact"
-      onClick={() => changeCurrentChat(index, { ...group, isGroup: true })}
-      style={{ background: '#222', border: '0.07rem solid #00fff7', borderRadius: '1rem', marginBottom: '0.5rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '.7rem', padding: '0.5rem 1rem' }}
-    >
-      <UserAvatar image={group.avatar || Logo} />
-      <div className="username">
-        <h3>{group.name}</h3>
-      </div>
-      <span style={{ color: '#00fff7', fontSize: '0.8rem', marginLeft: 'auto', fontWeight: 600 }}>Group</span>
+       
     </div>
   );
 
   return (
     <>
-      {currentUserImage && currentUserImage && (
+      {currentUserImage && (
         <Container>
           <div className="brand" style={{ position: 'relative' }}>
             <img src={Logo} alt="logo" />
@@ -183,24 +204,7 @@ export default function Contacts({ contacts, changeChat }) {
             </button>
           </div>
           <div className="contacts">
-            {groups.length > 0 && (
-              <div className="section">
-                <h4>Groups</h4>
-                {groups.map((group, index) => renderGroup(group, index))}
-              </div>
-            )}
-            {pinnedContacts.length > 0 && (
-              <div className="section">
-                <h4>Pinned Chats</h4>
-                {pinnedContacts.map((contact, index) => renderContact(contact, index))}
-              </div>
-            )}
-            {unpinnedContacts.length > 0 && (
-              <div className="section">
-                <h4>Recent Chats</h4>
-                {unpinnedContacts.map((contact, index) => renderContact(contact, index))}
-              </div>
-            )}
+            {allChats.length > 0 && allChats.map((chat, index) => renderChat(chat, index))}
           </div>
           {showCreateGroup && (
             <div style={{
@@ -247,17 +251,17 @@ export default function Contacts({ contacts, changeChat }) {
                 <div style={{ width: '100%', margin: '1rem 0' }}>
                   <div style={{ color: '#00fff7', marginBottom: '0.5rem', fontWeight: 600 }}>Select Members:</div>
                   <div style={{ maxHeight: '180px', overflowY: 'auto', background: '#222', borderRadius: '0.5rem', padding: '0.5rem' }}>
-                    {unpinnedContacts.concat(pinnedContacts).map((contact) => (
-                      <label key={contact._id} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#00fff7', marginBottom: '0.3rem', cursor: 'pointer' }}>
+                    {allChats.map((chat) => (
+                      <label key={chat.chatId} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#00fff7', marginBottom: '0.3rem', cursor: 'pointer' }}>
                         <input
                           type="checkbox"
-                          checked={selectedMembers.includes(contact._id)}
-                          onChange={() => handleToggleMember(contact._id)}
+                          checked={selectedMembers.includes(chat.chatId)}
+                          onChange={() => handleToggleMember(chat.chatId)}
                           disabled={creatingGroup}
                           style={{ accentColor: '#00fff7' }}
                         />
-                        <UserAvatar image={contact.avatarImage} />
-                        <span>{contact.username}</span>
+                        <UserAvatar image={chat.avatarImage} />
+                        <span>{chat.isGroup ? chat.username : chat.username}</span>
                       </label>
                     ))}
                   </div>

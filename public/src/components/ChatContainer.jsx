@@ -6,8 +6,10 @@ import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
 import { sendMessageRoute, recieveMessageRoute } from "../utils/APIRoutes";
 import UserAvatar from "./UserAvatar";
-import { FaCheck, FaCheckDouble } from "react-icons/fa";
+import { FaCheck, FaCheckDouble, FaRegCopy, FaReply } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function ChatContainer({ currentChat, socket }) {
   const [messages, setMessages] = useState([]);
@@ -17,6 +19,7 @@ export default function ChatContainer({ currentChat, socket }) {
   const [arrivalMessage, setArrivalMessage] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
   const navigate = useNavigate();
+  const [replyTo, setReplyTo] = useState(null);
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -95,6 +98,19 @@ export default function ChatContainer({ currentChat, socket }) {
     );
   };
 
+  const handleCopyMessage = (text) => {
+    navigator.clipboard.writeText(text);
+    toast.success("Message copied!", { position: "bottom-right", autoClose: 2000, theme: "dark" });
+  };
+
+  const handleReplyMessage = (message) => {
+    setReplyTo(message);
+  };
+
+  const handleCancelReply = () => {
+    setReplyTo(null);
+  };
+
   const handleSendMsg = async (msg) => {
     const data = await JSON.parse(
       localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)
@@ -105,14 +121,16 @@ export default function ChatContainer({ currentChat, socket }) {
       to: currentChat._id,
       from: data._id,
       msg,
-      messageId
+      messageId,
+      replyTo: replyTo ? replyTo._id : null,
     });
 
     await axios.post(sendMessageRoute, {
       from: data._id,
       to: currentChat._id,
       message: msg,
-      messageId
+      messageId,
+      replyTo: replyTo ? replyTo._id : null,
     });
 
     const msgs = [...messages];
@@ -120,9 +138,11 @@ export default function ChatContainer({ currentChat, socket }) {
       fromSelf: true,
       message: msg,
       status: "sending",
-      _id: messageId
+      _id: messageId,
+      replyTo: replyTo ? { ...replyTo } : null,
     });
     setMessages(msgs);
+    setReplyTo(null);
 
     // Mark message as sent after a short delay
     setTimeout(() => {
@@ -195,24 +215,47 @@ export default function ChatContainer({ currentChat, socket }) {
     <Container>
       <div className="chat-header">
         <div className="user-details">
-          <UserAvatar image={currentChat.avatarImage} onClick={handleChatUserProfile} />
+          <UserAvatar image={currentChat.avatarImage || currentChat.avatar} onClick={handleChatUserProfile} />
           <div className="username">
-            <h3>{currentChat.username}</h3>
+            <h3>{currentChat.isGroup ? currentChat.name : currentChat.username}</h3>
             {isTyping && <span className="typing-indicator">typing...</span>}
+            {currentChat.isGroup && currentChat.members && (
+              <div className="group-members" style={{ marginTop: '0.3rem', fontSize: '0.9rem', color: '#00fff7', fontWeight: 500 }}>
+                {currentChat.members.map(m => m.username).join(', ')}
+              </div>
+            )}
           </div>
         </div>
         <Logout />
       </div>
       <div className="chat-messages">
         {messages.map((message) => {
+          // Find the replied message text if replyTo is an ID or object
+          let replyText = null;
+          if (message.replyTo) {
+            if (typeof message.replyTo === 'object' && message.replyTo.message) {
+              replyText = message.replyTo.message;
+            } else if (typeof message.replyTo === 'string') {
+              const refMsg = messages.find(m => m._id === message.replyTo);
+              replyText = refMsg ? refMsg.message : '(message)';
+            }
+          }
           return (
             <div ref={scrollRef} key={message._id || uuidv4()}>
               <div
-                className={`message ${message.fromSelf ? "sended" : "recieved"
-                  }`}
+                className={`message ${message.fromSelf ? "sended" : "recieved"}`}
               >
                 <div className="content">
+                  {replyText && (
+                    <div className="reply-preview" style={{ fontSize: '0.9rem', color: '#00fff7', background: '#222', borderLeft: '3px solid #00fff7', padding: '0.2rem 0.7rem', marginBottom: '0.3rem', borderRadius: '0.5rem' }}>
+                      Replying to: {replyText}
+                    </div>
+                  )}
                   <p>{message.message}</p>
+                  <div className="message-actions">
+                    <FaRegCopy title="Copy" onClick={() => handleCopyMessage(message.message)} />
+                    <FaReply title="Reply" onClick={() => handleReplyMessage(message)} />
+                  </div>
                   {message.fromSelf && (
                     <div className="message-status">
                       {renderMessageStatus(message.status)}
@@ -224,7 +267,14 @@ export default function ChatContainer({ currentChat, socket }) {
           );
         })}
       </div>
+      {replyTo && (
+        <ReplyPreview>
+          <span>Replying to: {replyTo.message}</span>
+          <button onClick={handleCancelReply}>X</button>
+        </ReplyPreview>
+      )}
       <ChatInput handleSendMsg={handleSendMsg} onTyping={handleTyping} />
+      <ToastContainer />
     </Container>
   );
 }
@@ -323,6 +373,25 @@ const Container = styled.div`
         @media screen and (min-width: 720px) and (max-width: 1080px) {
           max-width: 70%;
         }
+        .message-actions {
+          display: none;
+          gap: 0.7rem;
+          margin-top: 0.2rem;
+          align-items: center;
+          svg {
+            cursor: pointer;
+            color: #00fff7;
+            font-size: 1.1rem;
+            transition: color 0.2s;
+            &:hover {
+              color: #00fff7;
+              filter: brightness(1.5);
+            }
+          }
+        }
+      }
+      &:hover .content .message-actions {
+        display: flex;
       }
     }
     .sended {
@@ -341,5 +410,47 @@ const Container = styled.div`
         border-bottom-left-radius: 0.5rem;
       }
     }
+  }
+
+  .message-actions {
+    display: none;
+    gap: 0.7rem;
+    margin-top: 0.2rem;
+    align-items: center;
+    svg {
+      cursor: pointer;
+      color: #00fff7;
+      font-size: 1.1rem;
+      transition: color 0.2s;
+      &:hover {
+        color: #00fff7;
+        filter: brightness(1.5);
+      }
+    }
+  }
+  &:hover .message-actions {
+    display: flex;
+  }
+`;
+
+const ReplyPreview = styled.div`
+  background: #222;
+  color: #00fff7;
+  padding: 0.5rem 1rem;
+  border-left: 3px solid #00fff7;
+  border-radius: 0.5rem;
+  margin: 0 2rem 0.5rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  z-index: 2;
+  button {
+    background: none;
+    border: none;
+    color: #00fff7;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 1rem;
   }
 `;

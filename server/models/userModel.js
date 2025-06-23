@@ -49,6 +49,19 @@ const userSchema = new mongoose.Schema({
       type: String
     }
   ],
+  pinnedChats: [
+    {
+      chatId: {
+        type: String,
+        required: true
+      },
+      type: {
+        type: String,
+        enum: ['user', 'group'],
+        required: true
+      }
+    }
+  ],
   isPinned: {
     type: Boolean,
     default: false
