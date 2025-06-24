@@ -169,7 +169,7 @@ export default function Contacts({ contacts, changeChat }) {
       >
         <FaThumbtack className={chat.isPinned ? "pinned" : ""} />
       </button>
-       
+
     </div>
   );
 
@@ -178,13 +178,13 @@ export default function Contacts({ contacts, changeChat }) {
       {currentUserImage && (
         <Container>
           <div className="brand" style={{ position: 'relative' }}>
-            <img src={Logo} alt="logo" />
+            {/* <img src={Logo} alt="logo" /> */}
             <h3>Convocube</h3>
             <button
               style={{
                 position: 'absolute',
                 right: '0.5rem',
-                top: '50%',
+                top: '100%',
                 transform: 'translateY(-50%)',
                 background: 'linear-gradient(90deg, #00fff7 0%, #222 100%)',
                 color: '#111',
@@ -204,7 +204,27 @@ export default function Contacts({ contacts, changeChat }) {
             </button>
           </div>
           <div className="contacts">
-            {allChats.length > 0 && allChats.map((chat, index) => renderChat(chat, index))}
+            {(() => {
+              const pinnedChats = allChats.filter(chat => chat.isPinned);
+              const recentChats = allChats.filter(chat => !chat.isPinned);
+
+              return (
+                <>
+                  {pinnedChats.length > 0 && (
+                    <div className="section">
+                      <h4>Pinned Chats</h4>
+                      {pinnedChats.map((chat, index) => renderChat(chat, index))}
+                    </div>
+                  )}
+                  {recentChats.length > 0 && (
+                    <div className="section">
+                      <h4>Recent Chats</h4>
+                      {recentChats.map((chat, index) => renderChat(chat, index))}
+                    </div>
+                  )}
+                </>
+              );
+            })()}
           </div>
           {showCreateGroup && (
             <div style={{

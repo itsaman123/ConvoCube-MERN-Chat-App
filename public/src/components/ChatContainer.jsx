@@ -252,28 +252,30 @@ export default function ChatContainer({ currentChat, socket }) {
                     </div>
                   )}
                   <p>{message.message}</p>
-                  <div className="message-actions">
-                    <FaRegCopy title="Copy" onClick={() => handleCopyMessage(message.message)} />
-                    <FaReply title="Reply" onClick={() => handleReplyMessage(message)} />
-                  </div>
                   {message.fromSelf && (
                     <div className="message-status">
                       {renderMessageStatus(message.status)}
                     </div>
                   )}
                 </div>
+                <div className="message-actions">
+                  <FaRegCopy title="Copy" onClick={() => handleCopyMessage(message.message)} />
+                  <FaReply title="Reply" onClick={() => handleReplyMessage(message)} />
+                </div>
               </div>
             </div>
           );
         })}
       </div>
-      {replyTo && (
-        <ReplyPreview>
-          <span>Replying to: {replyTo.message}</span>
-          <button onClick={handleCancelReply}>X</button>
-        </ReplyPreview>
-      )}
-      <ChatInput handleSendMsg={handleSendMsg} onTyping={handleTyping} />
+      <div className="chat-input-container">
+        {replyTo && (
+          <ReplyPreview>
+            <span>Replying to: {replyTo.message}</span>
+            <button onClick={handleCancelReply}>X</button>
+          </ReplyPreview>
+        )}
+        <ChatInput handleSendMsg={handleSendMsg} onTyping={handleTyping} />
+      </div>
       <ToastContainer />
     </Container>
   );
@@ -281,7 +283,7 @@ export default function ChatContainer({ currentChat, socket }) {
 
 const Container = styled.div`
   display: grid;
-  grid-template-rows: 10% 80% 10%;
+  grid-template-rows: 10% 75% 15%;
   gap: 0.1rem;
   overflow: hidden;
   background: #181818;
@@ -338,7 +340,8 @@ const Container = styled.div`
     }
     .message {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
+      position: relative;
       .content {
         max-width: 48%;
         overflow-wrap: break-word;
@@ -373,24 +376,32 @@ const Container = styled.div`
         @media screen and (min-width: 720px) and (max-width: 1080px) {
           max-width: 70%;
         }
-        .message-actions {
-          display: none;
-          gap: 0.7rem;
-          margin-top: 0.2rem;
-          align-items: center;
-          svg {
-            cursor: pointer;
+      }
+      .message-actions {
+        display: none;
+        gap: 0.7rem;
+        align-items: center;
+        position: absolute;
+        top: -1.5rem;
+        left: 0;
+        background: #181818;
+        padding: 0.3rem 0.7rem;
+        border-radius: 0.5rem;
+        border: 1px solid #00fff7;
+        box-shadow: 0 2px 8px 0 #00fff744;
+        z-index: 10;
+        svg {
+          cursor: pointer;
+          color: #00fff7;
+          font-size: 1rem;
+          transition: color 0.2s;
+          &:hover {
             color: #00fff7;
-            font-size: 1.1rem;
-            transition: color 0.2s;
-            &:hover {
-              color: #00fff7;
-              filter: brightness(1.5);
-            }
+            filter: brightness(1.5);
           }
         }
       }
-      &:hover .content .message-actions {
+      &:hover .message-actions {
         display: flex;
       }
     }
@@ -401,6 +412,10 @@ const Container = styled.div`
         color: #111;
         border-bottom-right-radius: 0.5rem;
       }
+      .message-actions {
+        right: 0;
+        left: auto;
+      }
     }
     .recieved {
       justify-content: flex-start;
@@ -409,27 +424,17 @@ const Container = styled.div`
         color: #00fff7;
         border-bottom-left-radius: 0.5rem;
       }
-    }
-  }
-
-  .message-actions {
-    display: none;
-    gap: 0.7rem;
-    margin-top: 0.2rem;
-    align-items: center;
-    svg {
-      cursor: pointer;
-      color: #00fff7;
-      font-size: 1.1rem;
-      transition: color 0.2s;
-      &:hover {
-        color: #00fff7;
-        filter: brightness(1.5);
+      .message-actions {
+        left: 0;
       }
     }
   }
-  &:hover .message-actions {
+
+  .chat-input-container {
     display: flex;
+    flex-direction: column;
+    background: #111;
+    border-radius: 0 0 24px 24px;
   }
 `;
 
@@ -439,7 +444,7 @@ const ReplyPreview = styled.div`
   padding: 0.5rem 1rem;
   border-left: 3px solid #00fff7;
   border-radius: 0.5rem;
-  margin: 0 2rem 0.5rem 2rem;
+  margin: 0.5rem 2rem 0.5rem 2rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
