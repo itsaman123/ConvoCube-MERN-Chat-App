@@ -11,7 +11,7 @@ import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-export default function ChatContainer({ currentChat, socket }) {
+export default function ChatContainer({ currentChat, socket, showMobileBackButton, onMobileBack }) {
   const [messages, setMessages] = useState([]);
   const [isTyping, setIsTyping] = useState(false);
   const [typingTimeout, setTypingTimeout] = useState(null);
@@ -215,6 +215,16 @@ export default function ChatContainer({ currentChat, socket }) {
     <Container>
       <div className="chat-header">
         <div className="user-details">
+          {/* Mobile back button */}
+          {showMobileBackButton && (
+            <button
+              className="mobile-back-btn"
+              onClick={onMobileBack}
+              aria-label="Back to contacts"
+            >
+              <span className="arrow-icon">&#11013;</span>
+            </button>
+          )}
           <UserAvatar image={currentChat.avatarImage || currentChat.avatar} onClick={handleChatUserProfile} />
           <div className="username">
             <h3>{currentChat.isGroup ? currentChat.name : currentChat.username}</h3>
@@ -294,6 +304,42 @@ const Container = styled.div`
     grid-template-rows: 15% 70% 15%;
   }
 
+  @media screen and (max-width: 719px) {
+    height: 100vh !important;
+    width: 100vw !important;
+    min-height: 100vh !important;
+    max-height: 100vh !important;
+    min-width: 100vw !important;
+    max-width: 100vw !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    grid-template-rows: 10% 75% 15%;
+    .chat-header, .chat-messages, .chat-input-container {
+      width: 100vw !important;
+      min-width: 100vw !important;
+      max-width: 100vw !important;
+    }
+    .chat-messages {
+      height: 75vh !important;
+      min-height: 75vh !important;
+      max-height: 75vh !important;
+      padding: 1rem 0.5rem !important;
+    }
+    .chat-header {
+      height: 10vh !important;
+      min-height: 10vh !important;
+      max-height: 10vh !important;
+      padding: 0 1rem !important;
+      border-radius: 0 !important;
+    }
+    .chat-input-container {
+      height: 15vh !important;
+      min-height: 15vh !important;
+      max-height: 15vh !important;
+      border-radius: 0 !important;
+    }
+  }
+
   .chat-header {
     display: flex;
     justify-content: space-between;
@@ -305,6 +351,25 @@ const Container = styled.div`
       display: flex;
       align-items: center;
       gap: 1rem;
+      .mobile-back-btn {
+        display: none;
+        background: none;
+        border: none;
+        color: #00fff7;
+        margin-right: 0.2rem;
+        cursor: pointer;
+        padding: 0;
+        line-height: 1;
+        @media screen and (max-width: 719px) {
+          display: block;
+        }
+        .arrow-icon {
+          font-size: 1.5rem;
+          font-weight: bold;
+          line-height: 1;
+          display: inline-block;
+        }
+      }
       .avatar {
         img {
           height: 2.8rem;

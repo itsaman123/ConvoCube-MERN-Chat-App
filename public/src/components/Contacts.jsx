@@ -18,6 +18,7 @@ export default function Contacts({ contacts, changeChat }) {
   const [selectedMembers, setSelectedMembers] = useState([]);
   const [groups, setGroups] = useState([]);
   const [pinnedChats, setPinnedChats] = useState([]);
+  const [showContactsList, setShowContactsList] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -78,6 +79,10 @@ export default function Contacts({ contacts, changeChat }) {
   const changeCurrentChat = (index, contact) => {
     setCurrentSelected(index);
     changeChat(contact);
+    // On mobile, hide contacts and show chat only
+    if (window.innerWidth <= 719) {
+      setShowContactsList(false);
+    }
   };
 
   const handlePinToggle = async (e, chat) => {
@@ -173,19 +178,29 @@ export default function Contacts({ contacts, changeChat }) {
     </div>
   );
 
+  // Back button handler for mobile
+  const handleBackToContacts = () => {
+    setShowContactsList(true);
+  };
+
   return (
     <>
       {currentUserImage && (
-        <Container>
-          <div className="brand">
-            {/* <img src={Logo} alt="logo" /> */}
+        <Container showContactsList={showContactsList}>
+          {/* Show back button on mobile when in chat view */}
+          {window.innerWidth <= 719 && !showContactsList && (
+            <button className="back-btn" onClick={handleBackToContacts}>
+              &#8592; Contacts
+            </button>
+          )}
+          {/* Contacts List */}
+          <div className="brand" style={{ display: (window.innerWidth <= 719 && !showContactsList) ? 'none' : undefined }}>
             <h3>Convocube</h3>
           </div>
-          <div className="contacts">
+          <div className="contacts" style={{ display: (window.innerWidth <= 719 && !showContactsList) ? 'none' : undefined }}>
             {(() => {
               const pinnedChats = allChats.filter(chat => chat.isPinned);
               const recentChats = allChats.filter(chat => !chat.isPinned);
-
               return (
                 <>
                   {pinnedChats.length > 0 && (
@@ -204,16 +219,16 @@ export default function Contacts({ contacts, changeChat }) {
               );
             })()}
           </div>
-
-          {/* Floating Create Group Button */}
-          <button
-            className="floating-create-btn"
-            onClick={() => setShowCreateGroup(true)}
-            title="Create Group"
-          >
-            <FaPlus />
-          </button>
-
+          {/* Floating Create Group Button (hide on chat view in mobile) */}
+          {(!window.innerWidth <= 719 || showContactsList) && (
+            <button
+              className="floating-create-btn"
+              onClick={() => setShowCreateGroup(true)}
+              title="Create Group"
+            >
+              <FaPlus />
+            </button>
+          )}
           {showCreateGroup && (
             <div style={{
               position: 'fixed',
@@ -512,6 +527,30 @@ const Container = styled.div`
       h2 {
         display:none;
       }
+    }
+  }
+  .back-btn {
+    display: none;
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    z-index: 20;
+    background: #00fff7;
+    color: #111;
+    border: none;
+    border-radius: 0.5rem;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 2px 8px 0 #00fff744;
+  }
+  @media screen and (max-width: 719px) {
+    .back-btn {
+      display: block;
+    }
+    .brand, .contacts, .floating-create-btn {
+      display: ${({ showContactsList }) => showContactsList ? 'block' : 'none'};
     }
   }
 `;

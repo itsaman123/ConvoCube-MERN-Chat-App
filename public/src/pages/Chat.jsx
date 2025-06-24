@@ -14,6 +14,8 @@ export default function Chat() {
   const [contacts, setContacts] = useState([]);
   const [currentChat, setCurrentChat] = useState(undefined);
   const [currentUser, setCurrentUser] = useState(undefined);
+  const [showMobileContacts, setShowMobileContacts] = useState(true);
+
   useEffect(() => {
     const checkUser = async () => {
       if (!localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)) {
@@ -55,19 +57,52 @@ export default function Chat() {
     };
     fetchContacts();
   }, [currentUser, navigate]);
+
   const handleChatChange = (chat) => {
     setCurrentChat(chat);
+    if (window.innerWidth <= 719) {
+      setShowMobileContacts(false);
+    }
   };
+
+  const handleBackToContacts = () => {
+    setShowMobileContacts(true);
+    setCurrentChat(undefined);
+  };
+
+  const isMobile = window.innerWidth <= 719;
+
   return (
     <>
       <Container>
         <TopNavbar />
         <div className="container">
-          <Contacts contacts={contacts} changeChat={handleChatChange} />
-          {currentChat === undefined ? (
-            <Welcome />
+          {isMobile ? (
+            showMobileContacts ? (
+              <Contacts contacts={contacts} changeChat={handleChatChange} />
+            ) : (
+              <div style={{ width: '100%', height: '100%', position: 'relative' }}>
+                {currentChat === undefined ? (
+                  <Welcome />
+                ) : (
+                  <ChatContainer
+                    currentChat={currentChat}
+                    socket={socket}
+                    showMobileBackButton={true}
+                    onMobileBack={handleBackToContacts}
+                  />
+                )}
+              </div>
+            )
           ) : (
-            <ChatContainer currentChat={currentChat} socket={socket} />
+            <>
+              <Contacts contacts={contacts} changeChat={handleChatChange} />
+              {currentChat === undefined ? (
+                <Welcome />
+              ) : (
+                <ChatContainer currentChat={currentChat} socket={socket} />
+              )}
+            </>
           )}
         </div>
       </Container>
@@ -99,6 +134,36 @@ const Container = styled.div`
     backdrop-filter: blur(8px);
     @media screen and (min-width: 720px) and (max-width: 1080px) {
       grid-template-columns: 45% 55%;
+    }
+    @media screen and (max-width: 719px) {
+      display: flex;
+      flex-direction: column;
+      width: 100vw;
+      height: 100vh;
+      min-height: 100vh;
+      max-height: 100vh;
+      border-radius: 0;
+      box-shadow: none;
+      border: none;
+      padding: 0;
+      background: #181818;
+    }
+  }
+  @media screen and (max-width: 719px) {
+    height: 100vh;
+    width: 100vw;
+    min-height: 100vh;
+    max-height: 100vh;
+    gap: 0;
+    align-items: stretch;
+    justify-content: stretch;
+    .container > div, .container > .contacts {
+      height: 100vh !important;
+      min-height: 100vh !important;
+      max-height: 100vh !important;
+      width: 100vw !important;
+      min-width: 100vw !important;
+      max-width: 100vw !important;
     }
   }
 `;
