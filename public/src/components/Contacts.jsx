@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Logo from "../assets/logo.png";
 import UserAvatar from "./UserAvatar";
-import { FaThumbtack } from "react-icons/fa";
+import { FaThumbtack, FaPlus } from "react-icons/fa";
 import axios from "axios";
 import { host, createGroupRoute, getUserGroupsRoute } from "../utils/APIRoutes";
 import { useNavigate } from "react-router-dom";
@@ -177,31 +177,9 @@ export default function Contacts({ contacts, changeChat }) {
     <>
       {currentUserImage && (
         <Container>
-          <div className="brand" style={{ position: 'relative' }}>
+          <div className="brand">
             {/* <img src={Logo} alt="logo" /> */}
             <h3>Convocube</h3>
-            <button
-              style={{
-                position: 'absolute',
-                right: '0.5rem',
-                top: '100%',
-                transform: 'translateY(-50%)',
-                background: 'linear-gradient(90deg, #00fff7 0%, #222 100%)',
-                color: '#111',
-                padding: '0.3rem 0.7rem',
-                border: 'none',
-                borderRadius: '0.5rem',
-                fontWeight: 'bold',
-                cursor: 'pointer',
-                fontSize: '0.85rem',
-                boxShadow: '0 2px 8px 0 #00fff744',
-                textTransform: 'uppercase',
-                zIndex: 2,
-              }}
-              onClick={() => setShowCreateGroup(true)}
-            >
-              + Group
-            </button>
           </div>
           <div className="contacts">
             {(() => {
@@ -226,6 +204,16 @@ export default function Contacts({ contacts, changeChat }) {
               );
             })()}
           </div>
+
+          {/* Floating Create Group Button */}
+          <button
+            className="floating-create-btn"
+            onClick={() => setShowCreateGroup(true)}
+            title="Create Group"
+          >
+            <FaPlus />
+          </button>
+
           {showCreateGroup && (
             <div style={{
               position: 'fixed',
@@ -271,7 +259,7 @@ export default function Contacts({ contacts, changeChat }) {
                 <div style={{ width: '100%', margin: '1rem 0' }}>
                   <div style={{ color: '#00fff7', marginBottom: '0.5rem', fontWeight: 600 }}>Select Members:</div>
                   <div style={{ maxHeight: '180px', overflowY: 'auto', background: '#222', borderRadius: '0.5rem', padding: '0.5rem' }}>
-                    {allChats.map((chat) => (
+                    {allChats.filter(chat => !chat.isGroup).map((chat) => (
                       <label key={chat.chatId} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#00fff7', marginBottom: '0.3rem', cursor: 'pointer' }}>
                         <input
                           type="checkbox"
@@ -348,6 +336,37 @@ const Container = styled.div`
   box-shadow: 0 4px 24px 0 #00fff733;
   border-right: 2px solid #00fff7;
   overflow: hidden;
+  position: relative;
+  
+  .floating-create-btn {
+    position: absolute;
+    bottom: 6rem;
+    right: 1rem;
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #00fff7 0%, #222 100%);
+    border: 2px solid #00fff7;
+    color: #111;
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 16px 0 #00fff744;
+    transition: all 0.3s ease;
+    z-index: 10;
+    
+    &:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 20px 0 #00fff766;
+    }
+    
+    &:active {
+      transform: scale(0.95);
+    }
+  }
+  
   .brand {
     display: flex;
     align-items: center;
@@ -396,6 +415,7 @@ const Container = styled.div`
       }
     }
     .contact {
+      margin: .5rem 0 0 .5rem; 
       background: #222;
       min-height: 3.2rem;
       cursor: pointer;
@@ -403,7 +423,7 @@ const Container = styled.div`
       border: 0.07rem solid #00fff7;
       border-radius: 1rem;
       display: flex;
-      gap: .7rem;
+      gap: .9rem;
       overflow:hidden;
       align-items: center;
       transition: 0.2s box-shadow, 0.2s background;
@@ -411,7 +431,7 @@ const Container = styled.div`
       box-shadow: 0 2px 8px 0 #00fff722;
       .avatar {
         img {
-          height: 2.5rem;
+          height: 2.2rem;
         }
       }
       .username {
@@ -421,7 +441,6 @@ const Container = styled.div`
         }
       }
       &:hover {
-        background: #111;
         box-shadow: 0 4px 16px 0 #00fff744;
       }
       .pin-button {

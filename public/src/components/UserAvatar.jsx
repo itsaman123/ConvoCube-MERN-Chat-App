@@ -15,8 +15,8 @@ const UserAvatar = ({ image, onClick }) => {
 };
 
 const AvatarContainer = styled.div`
-  width: 50px;
-  height: 50px;
+  width: 41px;
+  height: 41px;
   border-radius: 50%;
   overflow: hidden;
   display: flex;
@@ -25,6 +25,7 @@ const AvatarContainer = styled.div`
   border: 2.5px solid #00fff7;
   background: #111;
   box-shadow: 0 2px 8px 0 #00fff744;
+  margin-left: 0.5rem;
 
   img {
     width: 100%;
