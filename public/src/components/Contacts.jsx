@@ -52,7 +52,7 @@ export default function Contacts({ contacts, changeChat }) {
     const groupChats = groups.map(g => ({
       ...g,
       isGroup: true,
-      avatarImage: g.avatar || Logo,
+      avatarImage: g.avatar || generateGroupAvatar(g.name),
       username: g.name,
       members: g.members,
       chatId: g._id,
@@ -145,7 +145,7 @@ export default function Contacts({ contacts, changeChat }) {
         changeCurrentChat(groups.length, {
           ...newGroup,
           isGroup: true,
-          avatarImage: newGroup.avatar || Logo,
+          avatarImage: newGroup.avatar || generateGroupAvatar(newGroup.name),
           username: newGroup.name,
           members: newGroup.members,
         });
@@ -157,13 +157,26 @@ export default function Contacts({ contacts, changeChat }) {
     }
   };
 
+  // Function to get first 2 unique characters from name
+  const getFirstTwoUniqueChars = (name) => {
+    if (!name || name.length === 0) return "G";
+    const chars = name.split('').filter((char, index, arr) => arr.indexOf(char) === index);
+    return chars.slice(0, 2).join('').toUpperCase() || name.slice(0, 2).toUpperCase();
+  };
+
+  // Function to generate group avatar URL
+  const generateGroupAvatar = (groupName) => {
+    const baseChars = getFirstTwoUniqueChars(groupName);
+    return `https://ui-avatars.com/api/?name=${encodeURIComponent(baseChars)}&background=00fff7&color=111&rounded=true&size=200&font-size=0.4&bold=true`;
+  };
+
   const renderChat = (chat, index) => (
     <div
       key={chat.chatId}
       className={`contact ${index === currentSelected ? "selected" : ""}`}
       onClick={() => changeCurrentChat(index, chat)}
     >
-      <UserAvatar image={chat.avatarImage} />
+      <UserAvatar image={chat.avatarImage} name={chat.isGroup ? chat.username : chat.username} />
       <div className="username">
         <h3>{chat.isGroup ? chat.username : chat.username}</h3>
       </div>
@@ -283,7 +296,7 @@ export default function Contacts({ contacts, changeChat }) {
                           disabled={creatingGroup}
                           style={{ accentColor: '#00fff7' }}
                         />
-                        <UserAvatar image={chat.avatarImage} />
+                        <UserAvatar image={chat.avatarImage} name={chat.username} />
                         <span>{chat.isGroup ? chat.username : chat.username}</span>
                       </label>
                     ))}
@@ -332,7 +345,7 @@ export default function Contacts({ contacts, changeChat }) {
             </div>
           )}
           <div className="current-user">
-            <UserAvatar image={currentUserImage} onClick={handleCurrentUserProfile} />
+            <UserAvatar image={currentUserImage} onClick={handleCurrentUserProfile} name={currentUserName} />
             <div className="username">
               <h2>{currentUserName}</h2>
             </div>

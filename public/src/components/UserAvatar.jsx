@@ -1,7 +1,22 @@
 import React from "react";
 import styled from "styled-components";
 
-const UserAvatar = ({ image, onClick }) => {
+const UserAvatar = ({ image, onClick, name }) => {
+  // Function to get first 2 unique characters from name
+  const getFirstTwoUniqueChars = (name) => {
+    if (!name || name.length === 0) return "U";
+    const chars = name.split('').filter((char, index, arr) => arr.indexOf(char) === index);
+    return chars.slice(0, 2).join('').toUpperCase() || name.slice(0, 2).toUpperCase();
+  };
+
+  // Generate fallback avatar if no image is provided
+  const getFallbackAvatar = () => {
+    const initials = getFirstTwoUniqueChars(name || "User");
+    return `https://ui-avatars.com/api/?name=${encodeURIComponent(initials)}&background=00fff7&color=111&rounded=true&size=200&font-size=0.4&bold=true`;
+  };
+
+  const avatarSrc = image || getFallbackAvatar();
+
   return (
     <AvatarContainer
       onClick={onClick}
@@ -9,7 +24,7 @@ const UserAvatar = ({ image, onClick }) => {
       style={onClick ? { cursor: "pointer" } : {}}
       aria-label={onClick ? "View profile" : undefined}
     >
-      <img src={image} alt="avatar" />
+      <img src={avatarSrc} alt="avatar" />
     </AvatarContainer>
   );
 };

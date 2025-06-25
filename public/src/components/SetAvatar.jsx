@@ -13,6 +13,7 @@ export default function SetAvatar() {
   const [avatars, setAvatars] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedAvatar, setSelectedAvatar] = useState(undefined);
+  const [username, setUsername] = useState("");
 
   const toastOptions = {
     position: "bottom-right",
@@ -26,6 +27,10 @@ export default function SetAvatar() {
     const checkUser = async () => {
       const user = localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY);
       if (!user) navigate("/login");
+      else {
+        const userData = JSON.parse(user);
+        setUsername(userData.username);
+      }
     };
     checkUser();
   }, [navigate]);
@@ -56,40 +61,45 @@ export default function SetAvatar() {
     }
   };
 
-  // useEffect(() => {
-  //   const fetchAvatars = async () => {
-  //     try {
-  //       toast.error("Multiavatar API is not working. Using fallback avatars.", toastOptions);
-
-  //       // Fallback logic using ui-avatars.com
-  //       const fallbackAvatars = ['A', 'B', 'C', 'D', 'E'].map(char => `https://ui-avatars.com/api/?name=${char}`);
-  //       setAvatars(fallbackAvatars.slice(0, 4));
-  //     } finally {
-  //       setIsLoading(false);
-  //     }
-  //   };
-
-  //   fetchAvatars();
-  // }, []);
+  // Function to get first 2 unique characters from username
+  const getFirstTwoUniqueChars = (name) => {
+    if (!name || name.length === 0) return "U";
+    const chars = name.split('').filter((char, index, arr) => arr.indexOf(char) === index);
+    return chars.slice(0, 2).join('').toUpperCase() || name.slice(0, 2).toUpperCase();
+  };
 
   useEffect(() => {
     const fetchAvatars = async () => {
       try {
-        // Fallback logic using ui-avatars.com
-        const fallbackAvatars = ['User A', 'User B', 'User C', 'User D', 'User E'].map(name => `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random&rounded=true`);
-        setAvatars(fallbackAvatars);
+        if (username) {
+          // Generate avatars based on username with different color combinations
+          const baseChars = getFirstTwoUniqueChars(username);
+          const colorCombinations = [
+            { bg: 'random', color: 'fff' },
+            { bg: '00fff7', color: '111' },
+            { bg: 'ff6b6b', color: 'fff' },
+            { bg: '4ecdc4', color: 'fff' },
+            { bg: '45b7d1', color: 'fff' },
+            { bg: '96ceb4', color: 'fff' },
+            // { bg: 'feca57', color: '111' },
+            // { bg: 'ff9ff3', color: '111' },
+            // { bg: '54a0ff', color: 'fff' },
+            // { bg: '5f27cd', color: 'fff' }
+          ];
+
+          const generatedAvatars = colorCombinations.map(combo =>
+            `https://ui-avatars.com/api/?name=${encodeURIComponent(baseChars)}&background=${combo.bg}&color=${combo.color}&rounded=true&size=200&font-size=0.4&bold=true`
+          );
+
+          setAvatars(generatedAvatars);
+        }
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchAvatars();
-  }, []);
-
-
-
-
-
+  }, [username]);
 
   return (
     <>

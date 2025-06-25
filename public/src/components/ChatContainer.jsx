@@ -225,7 +225,7 @@ export default function ChatContainer({ currentChat, socket, showMobileBackButto
               <span className="arrow-icon">&#11013;</span>
             </button>
           )}
-          <UserAvatar image={currentChat.avatarImage || currentChat.avatar} onClick={handleChatUserProfile} />
+          <UserAvatar image={currentChat.avatarImage || currentChat.avatar} onClick={handleChatUserProfile} name={currentChat.isGroup ? currentChat.name : currentChat.username} />
           <div className="username">
             <h3>{currentChat.isGroup ? currentChat.name : currentChat.username}</h3>
             {isTyping && <span className="typing-indicator">typing...</span>}
@@ -337,6 +337,8 @@ const Container = styled.div`
       min-height: 15vh !important;
       max-height: 15vh !important;
       border-radius: 0 !important;
+      position: relative !important;
+      overflow: hidden !important;
     }
   }
 
@@ -500,6 +502,8 @@ const Container = styled.div`
     flex-direction: column;
     background: #111;
     border-radius: 0 0 24px 24px;
+    min-height: 15vh;
+    position: relative;
   }
 `;
 
@@ -509,12 +513,40 @@ const ReplyPreview = styled.div`
   padding: 0.5rem 1rem;
   border-left: 3px solid #00fff7;
   border-radius: 0.5rem;
-  margin: 0.5rem 2rem 0.5rem 2rem;
+  margin: 0rem 8rem 0.5rem 5rem;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   position: relative;
   z-index: 2;
+  max-height: 4rem;
+  overflow: hidden;
+  
+  @media screen and (max-width: 719px) {
+    margin: 0rem 1rem 0.3rem 1rem;
+    padding: 0.4rem 0.8rem;
+    max-height: 3.5rem;
+  }
+  
+  span {
+    flex: 1;
+    line-height: 1.2;
+    max-height: 2.4rem;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    word-wrap: break-word;
+    margin-right: 0.5rem;
+    font-size: 0.9rem;
+    
+    @media screen and (max-width: 719px) {
+      font-size: 0.85rem;
+      max-height: 2.1rem;
+      margin-right: 0.3rem;
+    }
+  }
+  
   button {
     background: none;
     border: none;
@@ -522,5 +554,13 @@ const ReplyPreview = styled.div`
     cursor: pointer;
     font-weight: 700;
     font-size: 1rem;
+    flex-shrink: 0;
+    padding: 0;
+    margin-left: 0.5rem;
+    
+    @media screen and (max-width: 719px) {
+      font-size: 0.9rem;
+      margin-left: 0.3rem;
+    }
   }
 `;

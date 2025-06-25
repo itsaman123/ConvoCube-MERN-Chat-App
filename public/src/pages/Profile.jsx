@@ -6,34 +6,34 @@ import UserAvatar from "../components/UserAvatar";
 import { host } from "../utils/APIRoutes";
 
 export default function Profile() {
-    const { userId } = useParams();
-    const [user, setUser] = useState(null);
+  const { userId } = useParams();
+  const [user, setUser] = useState(null);
 
-    useEffect(() => {
-        async function fetchUser() {
-            try {
-                const res = await axios.get(`${host}/api/auth/user/${userId}`);
-                setUser(res.data);
-            } catch (err) {
-                setUser(null);
-            }
-        }
-        fetchUser();
-    }, [userId]);
+  useEffect(() => {
+    async function fetchUser() {
+      try {
+        const res = await axios.get(`${host}/api/auth/user/${userId}`);
+        setUser(res.data);
+      } catch (err) {
+        setUser(null);
+      }
+    }
+    fetchUser();
+  }, [userId]);
 
-    if (!user) return <Container><h2>Loading profile...</h2></Container>;
+  if (!user) return <Container><h2>Loading profile...</h2></Container>;
 
-    return (
-        <Container>
-            <div className="profile-avatar">
-                <UserAvatar image={user.avatarImage} />
-            </div>
-            <div className="profile-info">
-                <h2>{user.username}</h2>
-                <p>Email: {user.email}</p>
-            </div>
-        </Container>
-    );
+  return (
+    <Container>
+      <div className="profile-avatar">
+        <UserAvatar image={user.avatarImage} name={user.username} />
+      </div>
+      <div className="profile-info">
+        <h2>{user.username}</h2>
+        <p>Email: {user.email}</p>
+      </div>
+    </Container>
+  );
 }
 
 const Container = styled.div`
