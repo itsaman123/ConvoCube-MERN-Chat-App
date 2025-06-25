@@ -167,7 +167,7 @@ export default function Contacts({ contacts, changeChat }) {
   // Function to generate group avatar URL
   const generateGroupAvatar = (groupName) => {
     const baseChars = getFirstTwoUniqueChars(groupName);
-    return `https://ui-avatars.com/api/?name=${encodeURIComponent(baseChars)}&background=00fff7&color=111&rounded=true&size=200&font-size=0.4&bold=true`;
+    return `https://ui-avatars.com/api/?name=${encodeURIComponent(baseChars)}&background=8E75F0&color=ffffff&rounded=true&size=200&font-size=0.4&bold=true`;
   };
 
   const renderChat = (chat, index) => (
@@ -256,11 +256,11 @@ export default function Contacts({ contacts, changeChat }) {
               zIndex: 1000,
             }}>
               <div style={{
-                background: '#181818',
+                background: '#000000',
                 padding: '2rem',
                 borderRadius: '1rem',
                 minWidth: '320px',
-                boxShadow: '0 4px 24px 0 #00fff733',
+                boxShadow: '0 4px 24px 0 #8E75F033',
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '1rem',
@@ -268,7 +268,7 @@ export default function Contacts({ contacts, changeChat }) {
                 maxHeight: '80vh',
                 overflowY: 'auto',
               }}>
-                <h2 style={{ color: '#00fff7', marginBottom: '1rem' }}>Create Group</h2>
+                <h2 style={{ color: '#ffffff', marginBottom: '1rem' }}>Create Group</h2>
                 <input
                   type="text"
                   placeholder="Group Name"
@@ -277,24 +277,24 @@ export default function Contacts({ contacts, changeChat }) {
                   style={{
                     padding: '0.7rem',
                     borderRadius: '0.5rem',
-                    border: '1px solid #00fff7',
-                    background: '#222',
-                    color: '#00fff7',
+                    border: '1px solid #8E75F0',
+                    background: '#333',
+                    color: '#ffffff',
                     width: '100%',
                   }}
                   disabled={creatingGroup}
                 />
                 <div style={{ width: '100%', margin: '1rem 0' }}>
-                  <div style={{ color: '#00fff7', marginBottom: '0.5rem', fontWeight: 600 }}>Select Members:</div>
-                  <div style={{ maxHeight: '180px', overflowY: 'auto', background: '#222', borderRadius: '0.5rem', padding: '0.5rem' }}>
+                  <div style={{ color: '#ffffff', marginBottom: '0.5rem', fontWeight: 600 }}>Select Members:</div>
+                  <div style={{ maxHeight: '180px', overflowY: 'auto', background: '#333', borderRadius: '0.5rem', padding: '0.5rem' }}>
                     {allChats.filter(chat => !chat.isGroup).map((chat) => (
-                      <label key={chat.chatId} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#00fff7', marginBottom: '0.3rem', cursor: 'pointer' }}>
+                      <label key={chat.chatId} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#ffffff', marginBottom: '0.3rem', cursor: 'pointer' }}>
                         <input
                           type="checkbox"
                           checked={selectedMembers.includes(chat.chatId)}
                           onChange={() => handleToggleMember(chat.chatId)}
                           disabled={creatingGroup}
-                          style={{ accentColor: '#00fff7' }}
+                          style={{ accentColor: '#8E75F0' }}
                         />
                         <UserAvatar image={chat.avatarImage} name={chat.username} />
                         <span>{chat.isGroup ? chat.username : chat.username}</span>
@@ -305,15 +305,15 @@ export default function Contacts({ contacts, changeChat }) {
                 <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
                   <button
                     style={{
-                      background: 'linear-gradient(90deg, #00fff7 0%, #222 100%)',
-                      color: '#111',
+                      background: '#8E75F0',
+                      color: '#ffffff',
                       padding: '0.7rem 1.5rem',
                       border: 'none',
                       borderRadius: '0.7rem',
                       fontWeight: 'bold',
                       cursor: selectedMembers.length === 0 || creatingGroup ? 'not-allowed' : 'pointer',
                       fontSize: '1rem',
-                      boxShadow: '0 2px 8px 0 #00fff744',
+                      boxShadow: '0 2px 8px 0 #8E75F044',
                       textTransform: 'uppercase',
                       opacity: creatingGroup || selectedMembers.length === 0 ? 0.7 : 1,
                     }}
@@ -324,15 +324,15 @@ export default function Contacts({ contacts, changeChat }) {
                   </button>
                   <button
                     style={{
-                      background: '#222',
-                      color: '#00fff7',
+                      background: '#333',
+                      color: '#ffffff',
                       padding: '0.7rem 1.5rem',
-                      border: '1px solid #00fff7',
+                      border: '1px solid #8E75F0',
                       borderRadius: '0.7rem',
                       fontWeight: 'bold',
                       cursor: 'pointer',
                       fontSize: '1rem',
-                      boxShadow: '0 2px 8px 0 #00fff744',
+                      boxShadow: '0 2px 8px 0 #8E75F044',
                       textTransform: 'uppercase',
                     }}
                     onClick={() => { setShowCreateGroup(false); setGroupName(""); setSelectedMembers([]); }}
@@ -359,10 +359,10 @@ export default function Contacts({ contacts, changeChat }) {
 const Container = styled.div`
   display: grid;
   grid-template-rows: 10% 75% 15%;
-  background: #181818;
+  background: #000000;
   border-radius: 20px 0 0 20px;
-  box-shadow: 0 4px 24px 0 #00fff733;
-  border-right: 2px solid #00fff7;
+  box-shadow: 0 4px 24px 0 #8E75F033;
+  border-right: 2px solid #8E75F0;
   overflow: hidden;
   position: relative;
   
@@ -373,21 +373,21 @@ const Container = styled.div`
     width: 3.5rem;
     height: 3.5rem;
     border-radius: 50%;
-    background: linear-gradient(135deg, #00fff7 0%, #222 100%);
-    border: 2px solid #00fff7;
-    color: #111;
+    background: #8E75F0;
+    border: 2px solid #8E75F0;
+    color: #ffffff;
     font-size: 1.5rem;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 16px 0 #00fff744;
+    box-shadow: 0 4px 16px 0 #8E75F044;
     transition: all 0.3s ease;
     z-index: 10;
     
     &:hover {
       transform: scale(1.1);
-      box-shadow: 0 6px 20px 0 #00fff766;
+      box-shadow: 0 6px 20px 0 #8E75F066;
     }
     
     &:active {
@@ -404,7 +404,7 @@ const Container = styled.div`
       height: 2rem;
     }
     h3 {
-      color: #00fff7;
+      color: #ffffff;
       text-transform: uppercase;
       letter-spacing: 2px;
       font-weight: 700;
@@ -427,7 +427,7 @@ const Container = styled.div`
     &::-webkit-scrollbar {
       width: 0.2rem;
       &-thumb {
-        background-color: #00fff7;
+        background-color: #8E75F0;
         width: 0.1rem;
         border-radius: 1rem;
       }
@@ -435,7 +435,7 @@ const Container = styled.div`
     .section {
       width: 100%;
       h4 {
-        color: #00fff7;
+        color: #ffffff;
         font-size: 0.8rem;
         margin: 0.5rem 1rem;
         text-transform: uppercase;
@@ -444,11 +444,11 @@ const Container = styled.div`
     }
     .contact {
       margin: .5rem 0 0 .5rem; 
-      background: #222;
+      background: #333;
       min-height: 3.2rem;
       cursor: pointer;
       width: 90%;
-      border: 0.07rem solid #00fff7;
+      border: 0.07rem solid #8E75F0;
       border-radius: 1rem;
       display: flex;
       gap: .9rem;
@@ -456,7 +456,7 @@ const Container = styled.div`
       align-items: center;
       transition: 0.2s box-shadow, 0.2s background;
       position: relative;
-      box-shadow: 0 2px 8px 0 #00fff722;
+      box-shadow: 0 2px 8px 0 #8E75F022;
       .avatar {
         img {
           height: 2.2rem;
@@ -464,19 +464,19 @@ const Container = styled.div`
       }
       .username {
         h3 {
-          color: #00fff7;
+          color: #ffffff;
           font-size: .95rem;
         }
       }
       &:hover {
-        box-shadow: 0 4px 16px 0 #00fff744;
+        box-shadow: 0 4px 16px 0 #8E75F044;
       }
       .pin-button {
         position: absolute;
         right: 0.5rem;
         background: none;
         border: none;
-        color: #00fff7;
+        color: #ffffff;
         cursor: pointer;
         opacity: 0;
         transition: opacity 0.3s ease;
@@ -484,7 +484,7 @@ const Container = styled.div`
         svg {
           font-size: 1rem;
           &.pinned {
-            color: #00fff7;
+            color: #8E75F0;
             transform: rotate(45deg);
           }
         }
@@ -494,10 +494,10 @@ const Container = styled.div`
       }
     }
     .selected {
-      background: linear-gradient(90deg, #00fff7 0%, #222 100%);
-      color: #111;
+      background: #8E75F0;
+      color: #ffffff;
       .username h3 {
-        color: #111;
+        color: #ffffff;
       }
     }
   }
@@ -516,7 +516,7 @@ const Container = styled.div`
     }
     .username {
       h2 {
-        color: #00fff7;
+        color: #ffffff;
         font-size: 1.2rem;
       }
     }
@@ -548,15 +548,15 @@ const Container = styled.div`
     top: 1rem;
     left: 1rem;
     z-index: 20;
-    background: #00fff7;
-    color: #111;
+    background: #8E75F0;
+    color: #ffffff;
     border: none;
     border-radius: 0.5rem;
     padding: 0.5rem 1rem;
     font-size: 1rem;
     font-weight: bold;
     cursor: pointer;
-    box-shadow: 0 2px 8px 0 #00fff744;
+    box-shadow: 0 2px 8px 0 #8E75F044;
   }
   @media screen and (max-width: 719px) {
     .back-btn {

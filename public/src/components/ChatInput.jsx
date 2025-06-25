@@ -61,7 +61,7 @@ const Container = styled.div`
   background: #111;
   padding: 0 2rem;
   border-radius: 0 0 24px 24px;
-  box-shadow: 0 2px 8px 0 #00fff744;
+  box-shadow: 0 2px 8px 0 #8E75F044;
   @media screen and (min-width: 720px) and (max-width: 1080px) {
     padding: 0 1rem;
     gap: 1rem;
@@ -69,20 +69,20 @@ const Container = styled.div`
   .button-container {
     display: flex;
     align-items: center;
-    color: #00fff7;
+    color: #ffffff;
     gap: 1rem;
     .emoji {
       position: relative;
       svg {
         font-size: 1.7rem;
-        color: #00fff7;
+        color: #ffffff;
         cursor: pointer;
-        filter: drop-shadow(0 1px 2px #00fff744);
+        filter: drop-shadow(0 1px 2px #8E75F044);
       }
       @media screen and (min-width: 390px) and (max-width: 719px) {
         svg {
           font-size: 1.5rem;
-          color: #00fff7;
+          color: #ffffff;
           cursor: pointer;
           padding-right: .6rem;
           overflow: hidden;
@@ -92,8 +92,8 @@ const Container = styled.div`
         position: absolute;
         top: -350px;
         background-color: #181818;
-        box-shadow: 0 5px 10px #00fff7;
-        border-color: #00fff7;
+        box-shadow: 0 5px 10px #8E75F0;
+        border-color: #8E75F0;
       }
     }
   }
@@ -104,18 +104,18 @@ const Container = styled.div`
     align-items: center;
     gap: 2rem;
     background: #181818;
-    box-shadow: 0 2px 8px 0 #00fff744;
+    box-shadow: 0 2px 8px 0 #8E75F044;
     input {
       width: 90%;
       height: 60%;
       background: transparent;
-      color: #00fff7;
+      color: #ffffff;
       border: none;
       padding-left: 1rem;
       font-size: 1.2rem;
       &::selection {
-        background-color: #00fff7;
-        color: #111;
+        background-color: #8E75F0;
+        color: #ffffff;
       }
       &:focus {
         outline: none;
@@ -127,10 +127,10 @@ const Container = styled.div`
       display: flex;
       justify-content: center;
       align-items: center;
-      background: linear-gradient(90deg, #00fff7 0%, #222 100%);
+      background: #8E75F0;
       border: none;
       cursor: pointer;
-      box-shadow: 0 2px 8px 0 #00fff744;
+      box-shadow: 0 2px 8px 0 #8E75F044;
       @media screen and (min-width: 720px) and (max-width: 1080px) {
         padding: 0.3rem 1rem;
         svg {
@@ -139,7 +139,7 @@ const Container = styled.div`
       }
       svg {
         font-size: 2rem;
-        color: #111;
+        color: #ffffff;
       }
     }
   }

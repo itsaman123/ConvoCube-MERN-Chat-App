@@ -76,7 +76,7 @@ export default function SetAvatar() {
           const baseChars = getFirstTwoUniqueChars(username);
           const colorCombinations = [
             { bg: 'random', color: 'fff' },
-            { bg: '00fff7', color: '111' },
+            { bg: '8E75F0', color: 'ffffff' },
             { bg: 'ff6b6b', color: 'fff' },
             { bg: '4ecdc4', color: 'fff' },
             { bg: '45b7d1', color: 'fff' },
@@ -140,7 +140,7 @@ const Container = styled.div`
   align-items: center;
   flex-direction: column;
   gap: 3rem;
-  background: #111;
+  background: #000000;
   height: 100vh;
   width: 100vw;
 
@@ -150,7 +150,7 @@ const Container = styled.div`
 
   .title-container {
     h1 {
-      color: #00fff7;
+      color: #ffffff;
       font-weight: 700;
       letter-spacing: 2px;
     }
@@ -168,8 +168,8 @@ const Container = styled.div`
       align-items: center;
       transition: 0.3s box-shadow, 0.3s border;
       cursor: pointer;
-      background: #222;
-      box-shadow: 0 2px 8px 0 #00fff744;
+      background: #333;
+      box-shadow: 0 2px 8px 0 #8E75F044;
 
       img {
         height: 6rem;
@@ -177,13 +177,13 @@ const Container = styled.div`
       }
     }
     .selected {
-      border: 0.4rem solid #00fff7;
-      box-shadow: 0 4px 16px 0 #00fff744;
+      border: 0.4rem solid #8E75F0;
+      box-shadow: 0 4px 16px 0 #8E75F044;
     }
   }
   .submit-btn {
-    background: linear-gradient(90deg, #00fff7 0%, #222 100%);
-    color: #111;
+    background: #8E75F0;
+    color: #ffffff;
     padding: 1rem 2rem;
     border: none;
     font-weight: bold;
@@ -191,10 +191,10 @@ const Container = styled.div`
     border-radius: 0.7rem;
     font-size: 1rem;
     text-transform: uppercase;
-    box-shadow: 0 2px 8px 0 #00fff744;
+    box-shadow: 0 2px 8px 0 #8E75F044;
     transition: background 0.2s;
     &:hover {
-      background: linear-gradient(90deg, #222 0%, #00fff7 100%);
+      background: #7A5FD0;
     }
   }
 `;

@@ -12,7 +12,7 @@ const UserAvatar = ({ image, onClick, name }) => {
   // Generate fallback avatar if no image is provided
   const getFallbackAvatar = () => {
     const initials = getFirstTwoUniqueChars(name || "User");
-    return `https://ui-avatars.com/api/?name=${encodeURIComponent(initials)}&background=00fff7&color=111&rounded=true&size=200&font-size=0.4&bold=true`;
+    return `https://ui-avatars.com/api/?name=${encodeURIComponent(initials)}&background=8E75F0&color=ffffff&rounded=true&size=200&font-size=0.4&bold=true`;
   };
 
   const avatarSrc = image || getFallbackAvatar();
@@ -37,9 +37,9 @@ const AvatarContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 2.5px solid #00fff7;
+  border: 2.5px solid #8E75F0;
   background: #111;
-  box-shadow: 0 2px 8px 0 #00fff744;
+  box-shadow: 0 2px 8px 0 #8E75F044;
   margin-left: 0.5rem;
 
   img {

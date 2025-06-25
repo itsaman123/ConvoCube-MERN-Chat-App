@@ -230,7 +230,7 @@ export default function ChatContainer({ currentChat, socket, showMobileBackButto
             <h3>{currentChat.isGroup ? currentChat.name : currentChat.username}</h3>
             {isTyping && <span className="typing-indicator">typing...</span>}
             {currentChat.isGroup && currentChat.members && (
-              <div className="group-members" style={{ marginTop: '0.3rem', fontSize: '0.9rem', color: '#00fff7', fontWeight: 500 }}>
+              <div className="group-members" style={{ marginTop: '0.3rem', fontSize: '0.9rem', color: '#ffffff', fontWeight: 500 }}>
                 {currentChat.members.map(m => m.username).join(', ')}
               </div>
             )}
@@ -257,7 +257,7 @@ export default function ChatContainer({ currentChat, socket, showMobileBackButto
               >
                 <div className="content">
                   {replyText && (
-                    <div className="reply-preview" style={{ fontSize: '0.9rem', color: '#00fff7', background: '#222', borderLeft: '3px solid #00fff7', padding: '0.2rem 0.7rem', marginBottom: '0.3rem', borderRadius: '0.5rem' }}>
+                    <div className="reply-preview" style={{ fontSize: '0.9rem', color: '#ffffff', background: '#333', borderLeft: '3px solid #8E75F0', padding: '0.2rem 0.7rem', marginBottom: '0.3rem', borderRadius: '0.5rem' }}>
                       Replying to: {replyText}
                     </div>
                   )}
@@ -296,9 +296,9 @@ const Container = styled.div`
   grid-template-rows: 10% 75% 15%;
   gap: 0.1rem;
   overflow: hidden;
-  background: #181818;
+  background: #000000;
   border-radius: 0 24px 24px 0;
-  box-shadow: 0 8px 32px 0 #00fff733;
+  box-shadow: 0 8px 32px 0 #8E75F033;
 
   @media screen and (min-width: 720px) and (max-width: 1080px) {
     grid-template-rows: 15% 70% 15%;
@@ -357,7 +357,7 @@ const Container = styled.div`
         display: none;
         background: none;
         border: none;
-        color: #00fff7;
+        color: #ffffff;
         margin-right: 0.2rem;
         cursor: pointer;
         padding: 0;
@@ -379,11 +379,11 @@ const Container = styled.div`
       }
       .username {
         h3 {
-          color: #00fff7;
+          color: #ffffff;
           font-weight: 700;
         }
         .typing-indicator {
-          color: #00fff7;
+          color: #ffffff;
           font-size: 0.8rem;
           font-style: italic;
         }
@@ -400,7 +400,7 @@ const Container = styled.div`
     &::-webkit-scrollbar {
       width: 0.2rem;
       &-thumb {
-        background-color: #00fff7;
+        background-color: #8E75F0;
         width: 0.1rem;
         border-radius: 1rem;
       }
@@ -415,9 +415,9 @@ const Container = styled.div`
         padding: 1.1rem 1.5rem;
         font-size: 1.1rem;
         border-radius: 1.5rem;
-        color: #00fff7;
+        color: #ffffff;
         position: relative;
-        box-shadow: 0 2px 8px 0 #00fff722;
+        box-shadow: 0 2px 8px 0 #8E75F022;
         .message-status {
           position: absolute;
           bottom: -15px;
@@ -427,16 +427,16 @@ const Container = styled.div`
           align-items: center;
           gap: 0.2rem;
           .status {
-            color: #00fff7;
+            color: #ffffff;
             &.sending {
               font-style: italic;
             }
           }
           .status-icon {
             font-size: 0.8rem;
-            color: #00fff7;
+            color: #ffffff;
             &.seen {
-              color: #00fff7;
+              color: #ffffff;
             }
           }
         }
@@ -454,16 +454,16 @@ const Container = styled.div`
         background: #181818;
         padding: 0.3rem 0.7rem;
         border-radius: 0.5rem;
-        border: 1px solid #00fff7;
-        box-shadow: 0 2px 8px 0 #00fff744;
+        border: 1px solid #8E75F0;
+        box-shadow: 0 2px 8px 0 #8E75F044;
         z-index: 10;
         svg {
           cursor: pointer;
-          color: #00fff7;
+          color: #ffffff;
           font-size: 1rem;
           transition: color 0.2s;
           &:hover {
-            color: #00fff7;
+            color: #8E75F0;
             filter: brightness(1.5);
           }
         }
@@ -475,8 +475,8 @@ const Container = styled.div`
     .sended {
       justify-content: flex-end;
       .content {
-        background: linear-gradient(90deg, #00fff7 0%, #222 100%);
-        color: #111;
+        background: #8E75F0;
+        color: #ffffff;
         border-bottom-right-radius: 0.5rem;
       }
       .message-actions {
@@ -487,8 +487,8 @@ const Container = styled.div`
     .recieved {
       justify-content: flex-start;
       .content {
-        background: #222;
-        color: #00fff7;
+        background: #333;
+        color: #ffffff;
         border-bottom-left-radius: 0.5rem;
       }
       .message-actions {
@@ -508,10 +508,10 @@ const Container = styled.div`
 `;
 
 const ReplyPreview = styled.div`
-  background: #222;
-  color: #00fff7;
+  background: #333;
+  color: #ffffff;
   padding: 0.5rem 1rem;
-  border-left: 3px solid #00fff7;
+  border-left: 3px solid #8E75F0;
   border-radius: 0.5rem;
   margin: 0rem 8rem 0.5rem 5rem;
   display: flex;
@@ -550,7 +550,7 @@ const ReplyPreview = styled.div`
   button {
     background: none;
     border: none;
-    color: #00fff7;
+    color: #ffffff;
     cursor: pointer;
     font-weight: 700;
     font-size: 1rem;

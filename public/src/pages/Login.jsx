@@ -101,7 +101,7 @@ const FormContainer = styled.div`
   justify-content: center;
   gap: 1rem;
   align-items: center;
-  background: #111;
+  background: #000000;
   .brand {
     display: flex;
     align-items: center;
@@ -111,7 +111,7 @@ const FormContainer = styled.div`
       height: 5rem;
     }
     h1 {
-      color: #00fff7;
+      color: #ffffff;
       text-transform: uppercase;
       letter-spacing: 2px;
       font-weight: 700;
@@ -122,30 +122,30 @@ const FormContainer = styled.div`
     display: flex;
     flex-direction: column;
     gap: 2rem;
-    background: #181818;
+    background: #000000;
     border-radius: 2rem;
-    padding: 5rem;
-    box-shadow: 0 8px 32px 0 #00fff733;
-    border: 1.5px solid #00fff7;
+    padding: 3rem 5rem;
+    box-shadow: 0 8px 32px 0 #8E75F033;
+    border: 1.5px solid #8E75F0;
     backdrop-filter: blur(8px);
   }
   input {
-    background: #222;
+    background: #333;
     padding: 1rem;
-    border: 0.1rem solid #00fff7;
+    border: 0.1rem solid #8E75F0;
     border-radius: 0.7rem;
-    color: #00fff7;
+    color: #ffffff;
     width: 100%;
     font-size: 1rem;
     transition: border 0.2s;
     &:focus {
-      border: 0.1rem solid #00fff7;
+      border: 0.1rem solid #8E75F0;
       outline: none;
     }
   }
   button {
-    background: linear-gradient(90deg, #00fff7 0%, #222 100%);
-    color: #111;
+    background: #8E75F0;
+    color: #ffffff;
     padding: 1rem 2rem;
     border: none;
     font-weight: bold;
@@ -153,22 +153,22 @@ const FormContainer = styled.div`
     border-radius: 0.7rem;
     font-size: 1rem;
     text-transform: uppercase;
-    box-shadow: 0 2px 8px 0 #00fff744;
+    box-shadow: 0 2px 8px 0 #8E75F044;
     transition: background 0.2s;
     &:hover {
-      background: linear-gradient(90deg, #222 0%, #00fff7 100%);
+      background: #7A5FD0;
     }
   }
   span {
-    color: #00fff7;
+    color: #ffffff;
     text-transform: uppercase;
     a {
-      color: #00fff7;
+      color: #ffffff;
       text-decoration: none;
       font-weight: bold;
       transition: color 0.2s;
       &:hover {
-        color: #fff;
+        color: #8E75F0;
       }
     }
   }

@@ -28,17 +28,17 @@ const Container = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  color: #00fff7;
+  color: #ffffff;
   flex-direction: column;
-  background: #181818;
+  background: #000000;
   border-radius: 24px;
-  box-shadow: 0 8px 32px 0 #00fff733;
+  box-shadow: 0 8px 32px 0 #8E75F033;
   padding: 3rem 4rem;
   img {
     height: 20rem;
   }
   span {
-    color: #00fff7;
+    color: #ffffff;
     font-weight: 700;
     letter-spacing: 2px;
   }
