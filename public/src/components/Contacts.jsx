@@ -412,9 +412,22 @@ const Container = styled.div`
   }
   @media screen and (min-width: 390px) and (max-width: 719px) {
     .brand {
+      width: 100%;
+      justify-content: center;
+      align-items: center;
+      display: flex;
+      margin-bottom: 0.3rem;
+      padding: 0.3rem 0 0.1rem 0;
       h3 {
-        display:none;
+        font-size: 1.3rem;
+        text-align: center;
+        width: 100%;
+        margin: 0 auto;
       }
+    }
+    .contacts {
+      padding: 0.2rem 0 0.5rem 0;
+      gap: 0.4rem;
     }
   }
   .contacts {
@@ -443,7 +456,7 @@ const Container = styled.div`
       }
     }
     .contact {
-      margin: .5rem 0 0 .5rem; 
+      margin: .5rem 0 0 1.2rem; 
       background: #333;
       min-height: 3.2rem;
       cursor: pointer;

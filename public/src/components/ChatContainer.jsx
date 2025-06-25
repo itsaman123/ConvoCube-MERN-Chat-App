@@ -476,7 +476,7 @@ const Container = styled.div`
       justify-content: flex-end;
       .content {
         background: #8E75F0;
-        color: #ffffff;
+        color:hsl(0, 0.00%, 100.00%);
         border-bottom-right-radius: 0.5rem;
       }
       .message-actions {
