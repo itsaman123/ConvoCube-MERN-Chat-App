@@ -30,6 +30,7 @@ export default function ChatContainer({ currentChat, socket, showMobileBackButto
       const response = await axios.post(recieveMessageRoute, {
         from: data._id,
         to: currentChat._id,
+        chatType: currentChat.isGroup ? "group" : "individual"
       });
       setMessages(response.data);
     };
@@ -39,22 +40,39 @@ export default function ChatContainer({ currentChat, socket, showMobileBackButto
   useEffect(() => {
     if (socket.current) {
       const handleMsgReceive = (data) => {
-        setArrivalMessage({
-          fromSelf: false,
-          message: data.msg,
-          status: data.status,
-          from: data.from
-        });
+        // Check if this message is for the current chat
+        const isForCurrentChat = currentChat.isGroup
+          ? (data.chatType === "group" && data.to === currentChat._id)
+          : (data.chatType === "individual" && data.from === currentChat._id);
+
+        if (isForCurrentChat) {
+          setArrivalMessage({
+            fromSelf: false,
+            message: data.msg,
+            status: data.status,
+            from: data.from
+          });
+        }
       };
 
       const handleUserTyping = (data) => {
-        if (data.from === currentChat._id) {
+        // Check if typing is for the current chat
+        const isForCurrentChat = currentChat.isGroup
+          ? (data.chatType === "group" && data.to === currentChat._id)
+          : (data.chatType === "individual" && data.from === currentChat._id);
+
+        if (isForCurrentChat) {
           setIsTyping(true);
         }
       };
 
       const handleUserStoppedTyping = (data) => {
-        if (data.from === currentChat._id) {
+        // Check if stop typing is for the current chat
+        const isForCurrentChat = currentChat.isGroup
+          ? (data.chatType === "group" && data.to === currentChat._id)
+          : (data.chatType === "individual" && data.from === currentChat._id);
+
+        if (isForCurrentChat) {
           setIsTyping(false);
         }
       };
@@ -117,12 +135,15 @@ export default function ChatContainer({ currentChat, socket, showMobileBackButto
     );
 
     const messageId = uuidv4();
+    const chatType = currentChat.isGroup ? "group" : "individual";
+
     socket.current.emit("send-msg", {
       to: currentChat._id,
       from: data._id,
       msg,
       messageId,
       replyTo: replyTo ? replyTo._id : null,
+      chatType
     });
 
     await axios.post(sendMessageRoute, {
@@ -131,6 +152,7 @@ export default function ChatContainer({ currentChat, socket, showMobileBackButto
       message: msg,
       messageId,
       replyTo: replyTo ? replyTo._id : null,
+      chatType
     });
 
     const msgs = [...messages];
@@ -160,10 +182,12 @@ export default function ChatContainer({ currentChat, socket, showMobileBackButto
 
   const handleTyping = () => {
     if (socket.current) {
+      const chatType = currentChat.isGroup ? "group" : "individual";
       socket.current.emit("typing", {
         to: currentChat._id,
         from: currentUser._id,
-        isTyping: true
+        isTyping: true,
+        chatType
       });
 
       // Clear existing timeout
@@ -175,7 +199,8 @@ export default function ChatContainer({ currentChat, socket, showMobileBackButto
       const timeout = setTimeout(() => {
         socket.current.emit("stop-typing", {
           to: currentChat._id,
-          from: currentUser._id
+          from: currentUser._id,
+          chatType
         });
       }, 2000);
 
@@ -228,12 +253,12 @@ export default function ChatContainer({ currentChat, socket, showMobileBackButto
           <UserAvatar image={currentChat.avatarImage || currentChat.avatar} onClick={handleChatUserProfile} name={currentChat.isGroup ? currentChat.name : currentChat.username} />
           <div className="username">
             <h3>{currentChat.isGroup ? currentChat.name : currentChat.username}</h3>
-            {isTyping && <span className="typing-indicator">typing...</span>}
             {currentChat.isGroup && currentChat.members && (
               <div className="group-members" style={{ marginTop: '0.3rem', fontSize: '0.9rem', color: '#ffffff', fontWeight: 500 }}>
                 {currentChat.members.map(m => m.username).join(', ')}
               </div>
             )}
+            {isTyping && <span className="typing-indicator">typing...</span>}
           </div>
         </div>
         <Logout />
