@@ -5,6 +5,7 @@ const authRoutes = require("./routes/auth");
 const messageRoutes = require("./routes/messages");
 const app = express();
 const socket = require("socket.io");
+const Group = require("./models/groupModel");
 require("dotenv").config();
 
 app.use(cors());
@@ -49,33 +50,109 @@ io.on("connection", (socket) => {
     onlineUsers.set(userId, socket.id);
   });
 
-  socket.on("send-msg", (data) => {
-    const sendUserSocket = onlineUsers.get(data.to);
-    if (sendUserSocket) {
-      socket.to(sendUserSocket).emit("msg-recieve", {
-        msg: data.msg,
-        from: data.from,
-        status: "sent"
-      });
+  socket.on("send-msg", async (data) => {
+    try {
+      // Check if this is a group message
+      const group = await Group.findById(data.to);
+
+      if (group) {
+        // This is a group message - send to all group members
+        group.members.forEach(memberId => {
+          if (memberId.toString() !== data.from) { // Don't send to sender
+            const memberSocket = onlineUsers.get(memberId.toString());
+            if (memberSocket) {
+              socket.to(memberSocket).emit("msg-recieve", {
+                msg: data.msg,
+                from: data.from,
+                to: data.to,
+                status: "sent",
+                isGroup: true,
+                groupName: group.name
+              });
+            }
+          }
+        });
+      } else {
+        // This is an individual message
+        const sendUserSocket = onlineUsers.get(data.to);
+        if (sendUserSocket) {
+          socket.to(sendUserSocket).emit("msg-recieve", {
+            msg: data.msg,
+            from: data.from,
+            status: "sent"
+          });
+        }
+      }
+    } catch (error) {
+      console.error("Error in send-msg:", error);
     }
   });
 
-  socket.on("typing", (data) => {
-    const sendUserSocket = onlineUsers.get(data.to);
-    if (sendUserSocket) {
-      socket.to(sendUserSocket).emit("user-typing", {
-        from: data.from,
-        isTyping: data.isTyping
-      });
+  socket.on("typing", async (data) => {
+    try {
+      // Check if this is a group typing
+      const group = await Group.findById(data.to);
+
+      if (group) {
+        // Send typing indicator to all group members
+        group.members.forEach(memberId => {
+          if (memberId.toString() !== data.from) {
+            const memberSocket = onlineUsers.get(memberId.toString());
+            if (memberSocket) {
+              socket.to(memberSocket).emit("user-typing", {
+                from: data.from,
+                to: data.to,
+                isTyping: data.isTyping,
+                isGroup: true
+              });
+            }
+          }
+        });
+      } else {
+        // Individual typing
+        const sendUserSocket = onlineUsers.get(data.to);
+        if (sendUserSocket) {
+          socket.to(sendUserSocket).emit("user-typing", {
+            from: data.from,
+            isTyping: data.isTyping
+          });
+        }
+      }
+    } catch (error) {
+      console.error("Error in typing:", error);
     }
   });
 
-  socket.on("stop-typing", (data) => {
-    const sendUserSocket = onlineUsers.get(data.to);
-    if (sendUserSocket) {
-      socket.to(sendUserSocket).emit("user-stopped-typing", {
-        from: data.from
-      });
+  socket.on("stop-typing", async (data) => {
+    try {
+      // Check if this is a group typing
+      const group = await Group.findById(data.to);
+
+      if (group) {
+        // Send stop typing to all group members
+        group.members.forEach(memberId => {
+          if (memberId.toString() !== data.from) {
+            const memberSocket = onlineUsers.get(memberId.toString());
+            if (memberSocket) {
+              socket.to(memberSocket).emit("user-stopped-typing", {
+                from: data.from,
+                to: data.to,
+                isGroup: true
+              });
+            }
+          }
+        });
+      } else {
+        // Individual stop typing
+        const sendUserSocket = onlineUsers.get(data.to);
+        if (sendUserSocket) {
+          socket.to(sendUserSocket).emit("user-stopped-typing", {
+            from: data.from
+          });
+        }
+      }
+    } catch (error) {
+      console.error("Error in stop-typing:", error);
     }
   });
 

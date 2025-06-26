@@ -1,20 +1,36 @@
 const Messages = require("../models/messageModel");
 const Users = require("../models/userModel");
+const Group = require("../models/groupModel");
 
 module.exports.getMessages = async (req, res, next) => {
   try {
     const { from, to, limit, skip } = req.body;
 
-    const messages = await Messages.find({
-      users: {
-        $all: [from, to],
-      },
-    }).sort({ updatedAt: 1 }).limit(limit).skip(skip);
+    // Check if this is a group chat
+    const group = await Group.findById(to);
+
+    let messages;
+    if (group) {
+      // This is a group chat - get messages where 'to' is the group ID
+      messages = await Messages.find({
+        to: to
+      }).sort({ updatedAt: 1 }).limit(limit).skip(skip);
+    } else {
+      // This is an individual chat
+      messages = await Messages.find({
+        users: {
+          $all: [from, to],
+        },
+      }).sort({ updatedAt: 1 }).limit(limit).skip(skip);
+    }
 
     const projectedMessages = messages.map((msg) => {
       return {
         fromSelf: msg.sender.toString() === from,
         message: msg.message.text,
+        _id: msg._id,
+        replyTo: msg.replyTo,
+        status: msg.status || "sent" // Default to "sent" if status is not set
       };
     });
     res.json(projectedMessages);
@@ -25,14 +41,40 @@ module.exports.getMessages = async (req, res, next) => {
 
 module.exports.addMessage = async (req, res, next) => {
   try {
-    const { from, to, message } = req.body;
-    const data = await Messages.create({
-      message: { text: message },
-      users: [from, to],
-      sender: from,
-    });
+    const { from, to, message, messageId, replyTo } = req.body;
 
-    if (data) return res.json({ msg: "Message sent successfully." });
+    // Check if this is a group message
+    const group = await Group.findById(to);
+
+    let messageData;
+    if (group) {
+      // This is a group message
+      messageData = await Messages.create({
+        message: { text: message },
+        users: group.members, // Include all group members
+        sender: from,
+        to: to, // Store the group ID as 'to'
+        toModel: 'Group', // Set the model reference
+        chatId: to,
+        messageId: messageId,
+        replyTo: replyTo,
+        status: "sent" // Set status to sent when storing in database
+      });
+    } else {
+      // This is an individual message
+      messageData = await Messages.create({
+        message: { text: message },
+        users: [from, to],
+        sender: from,
+        to: to, // Store the recipient ID as 'to'
+        toModel: 'Users', // Set the model reference
+        messageId: messageId,
+        replyTo: replyTo,
+        status: "sent" // Set status to sent when storing in database
+      });
+    }
+
+    if (messageData) return res.json({ msg: "Message sent successfully." });
     else return res.json({ msg: "Failed to send message to the database" });
   } catch (ex) {
     next(ex);

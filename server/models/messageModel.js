@@ -11,6 +11,16 @@ const MessageSchema = mongoose.Schema(
       ref: "User",
       required: true,
     },
+    to: {
+      type: mongoose.Schema.Types.ObjectId,
+      refPath: 'toModel',
+      default: null
+    },
+    toModel: {
+      type: String,
+      enum: ['Users', 'Group'],
+      default: 'Users'
+    },
     chatId: {
       type: String
     },

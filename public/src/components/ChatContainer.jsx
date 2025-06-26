@@ -39,35 +39,79 @@ export default function ChatContainer({ currentChat, socket, showMobileBackButto
   useEffect(() => {
     if (socket.current) {
       const handleMsgReceive = (data) => {
-        setArrivalMessage({
-          fromSelf: false,
-          message: data.msg,
-          status: data.status,
-          from: data.from
-        });
+        // Check if this message is for the current chat
+        if (currentChat.isGroup) {
+          // For group messages, check if the 'to' field matches current group
+          if (data.to === currentChat._id) {
+            setArrivalMessage({
+              fromSelf: false,
+              message: data.msg,
+              status: data.status,
+              from: data.from
+            });
+          }
+        } else {
+          // For individual messages, check if the 'from' field matches current chat
+          if (data.from === currentChat._id) {
+            setArrivalMessage({
+              fromSelf: false,
+              message: data.msg,
+              status: data.status,
+              from: data.from
+            });
+          }
+        }
       };
 
       const handleUserTyping = (data) => {
-        if (data.from === currentChat._id) {
-          setIsTyping(true);
+        if (currentChat.isGroup) {
+          // For group typing, check if it's for the current group
+          if (data.to === currentChat._id) {
+            setIsTyping(true);
+          }
+        } else {
+          // For individual typing
+          if (data.from === currentChat._id) {
+            setIsTyping(true);
+          }
         }
       };
 
       const handleUserStoppedTyping = (data) => {
-        if (data.from === currentChat._id) {
-          setIsTyping(false);
+        if (currentChat.isGroup) {
+          // For group typing, check if it's for the current group
+          if (data.to === currentChat._id) {
+            setIsTyping(false);
+          }
+        } else {
+          // For individual typing
+          if (data.from === currentChat._id) {
+            setIsTyping(false);
+          }
         }
       };
 
       const handleMsgDelivered = (data) => {
-        if (data.to === currentChat._id) {
-          updateMessageStatus(data.messageId, "delivered");
+        if (currentChat.isGroup) {
+          if (data.to === currentChat._id) {
+            updateMessageStatus(data.messageId, "delivered");
+          }
+        } else {
+          if (data.to === currentChat._id) {
+            updateMessageStatus(data.messageId, "delivered");
+          }
         }
       };
 
       const handleMsgSeen = (data) => {
-        if (data.to === currentChat._id) {
-          updateMessageStatus(data.messageId, "seen");
+        if (currentChat.isGroup) {
+          if (data.to === currentChat._id) {
+            updateMessageStatus(data.messageId, "seen");
+          }
+        } else {
+          if (data.to === currentChat._id) {
+            updateMessageStatus(data.messageId, "seen");
+          }
         }
       };
 
@@ -125,7 +169,7 @@ export default function ChatContainer({ currentChat, socket, showMobileBackButto
       replyTo: replyTo ? replyTo._id : null,
     });
 
-    await axios.post(sendMessageRoute, {
+    const response = await axios.post(sendMessageRoute, {
       from: data._id,
       to: currentChat._id,
       message: msg,
@@ -133,21 +177,17 @@ export default function ChatContainer({ currentChat, socket, showMobileBackButto
       replyTo: replyTo ? replyTo._id : null,
     });
 
+    // Add the message to local state with "sent" status since it's now in the database
     const msgs = [...messages];
     msgs.push({
       fromSelf: true,
       message: msg,
-      status: "sending",
+      status: "sent", // Set to "sent" since it's now stored in database
       _id: messageId,
       replyTo: replyTo ? { ...replyTo } : null,
     });
     setMessages(msgs);
     setReplyTo(null);
-
-    // Mark message as sent after a short delay
-    setTimeout(() => {
-      updateMessageStatus(messageId, "sent");
-    }, 1000);
   };
 
   useEffect(() => {
@@ -186,9 +226,9 @@ export default function ChatContainer({ currentChat, socket, showMobileBackButto
   const renderMessageStatus = (status) => {
     switch (status) {
       case "sending":
-        return <span className="status sending">Sending...</span>;
+        return <FaCheck cclassName="status-icon" />;
       case "sent":
-        return <FaCheck className="status-icon" />;
+        return <FaCheck cclassName="status-icon" />;
       case "delivered":
         return <FaCheckDouble className="status-icon" />;
       case "seen":
