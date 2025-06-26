@@ -133,3 +133,41 @@ module.exports.getUserGroups = async (req, res, next) => {
     next(error);
   }
 };
+
+// Get Group by ID
+module.exports.getGroupById = async (req, res, next) => {
+  try {
+    const groupId = req.params.id;
+    const group = await Group.findById(groupId)
+      .populate('members', 'username avatarImage _id email')
+      .populate('createdBy', 'username avatarImage _id')
+      .lean();
+
+    if (!group) {
+      return res.status(404).json({ msg: "Group not found" });
+    }
+
+    // Get message count for this group
+    const Messages = require("../models/messageModel");
+    const messageCount = await Messages.countDocuments({ to: groupId });
+
+    // Get last message
+    const lastMessage = await Messages.findOne({ to: groupId })
+      .sort({ createdAt: -1 })
+      .select('message createdAt')
+      .lean();
+
+    const groupWithStats = {
+      ...group,
+      messageCount,
+      lastMessage: lastMessage ? {
+        text: lastMessage.message.text,
+        createdAt: lastMessage.createdAt
+      } : null
+    };
+
+    return res.json(groupWithStats);
+  } catch (error) {
+    next(error);
+  }
+};

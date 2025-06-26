@@ -5,6 +5,7 @@ import Chat from "./pages/Chat";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Profile from "./pages/Profile";
+import GroupProfile from "./pages/GroupProfile";
 
 export default function App() {
   return (
@@ -15,6 +16,7 @@ export default function App() {
         <Route path="/setAvatar" element={<SetAvatar />} />
         <Route path="/" element={<Chat />} />
         <Route path="/profile/:userId" element={<Profile />} />
+        <Route path="/group/:groupId" element={<GroupProfile />} />
       </Routes>
     </BrowserRouter>
   );

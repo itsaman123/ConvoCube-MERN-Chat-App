@@ -15,3 +15,4 @@ export const setAvatarRoute = `${host}/api/auth/setavatar`;
 export const togglePinRoute = `${host}/api/messages/togglepin`;
 export const createGroupRoute = `${host}/api/auth/group`;
 export const getUserGroupsRoute = `${host}/api/auth/groups`;
+export const getGroupByIdRoute = `${host}/api/auth/group`;

@@ -239,7 +239,11 @@ export default function ChatContainer({ currentChat, socket, showMobileBackButto
   };
 
   const handleChatUserProfile = () => {
-    navigate(`/profile/${currentChat._id}`);
+    if (currentChat.isGroup) {
+      navigate(`/group/${currentChat._id}`);
+    } else {
+      navigate(`/profile/${currentChat._id}`);
+    }
   };
 
   // Cleanup timeout on unmount
