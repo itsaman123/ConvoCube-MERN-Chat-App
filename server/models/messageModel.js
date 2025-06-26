@@ -14,11 +14,6 @@ const MessageSchema = mongoose.Schema(
     chatId: {
       type: String
     },
-    chatType: {
-      type: String,
-      enum: ["individual", "group"],
-      default: "individual"
-    },
     senderId: {
       type: String
     },

@@ -1,36 +1,20 @@
 const Messages = require("../models/messageModel");
 const Users = require("../models/userModel");
-const Group = require("../models/groupModel");
 
 module.exports.getMessages = async (req, res, next) => {
   try {
-    const { from, to, limit, skip, chatType = "individual" } = req.body;
+    const { from, to, limit, skip } = req.body;
 
-    let messages;
-    if (chatType === "group") {
-      // For group messages, find messages where chatId matches the group ID
-      messages = await Messages.find({
-        chatId: to,
-        chatType: "group"
-      }).sort({ updatedAt: 1 }).limit(limit).skip(skip);
-    } else {
-      // For individual messages, use the existing logic
-      messages = await Messages.find({
-        users: {
-          $all: [from, to],
-        },
-        chatType: "individual"
-      }).sort({ updatedAt: 1 }).limit(limit).skip(skip);
-    }
+    const messages = await Messages.find({
+      users: {
+        $all: [from, to],
+      },
+    }).sort({ updatedAt: 1 }).limit(limit).skip(skip);
 
     const projectedMessages = messages.map((msg) => {
       return {
         fromSelf: msg.sender.toString() === from,
         message: msg.message.text,
-        _id: msg._id,
-        replyTo: msg.replyTo,
-        status: msg.status,
-        timestamp: msg.createdAt
       };
     });
     res.json(projectedMessages);
@@ -41,29 +25,14 @@ module.exports.getMessages = async (req, res, next) => {
 
 module.exports.addMessage = async (req, res, next) => {
   try {
-    const { from, to, message, chatType = "individual" } = req.body;
+    const { from, to, message } = req.body;
+    const data = await Messages.create({
+      message: { text: message },
+      users: [from, to],
+      sender: from,
+    });
 
-    let messageData;
-    if (chatType === "group") {
-      // For group messages, store with group ID as chatId
-      messageData = await Messages.create({
-        message: { text: message },
-        users: [from], // Only store sender initially
-        sender: from,
-        chatId: to, // Group ID
-        chatType: "group"
-      });
-    } else {
-      // For individual messages, use existing logic
-      messageData = await Messages.create({
-        message: { text: message },
-        users: [from, to],
-        sender: from,
-        chatType: "individual"
-      });
-    }
-
-    if (messageData) return res.json({ msg: "Message sent successfully." });
+    if (data) return res.json({ msg: "Message sent successfully." });
     else return res.json({ msg: "Failed to send message to the database" });
   } catch (ex) {
     next(ex);
