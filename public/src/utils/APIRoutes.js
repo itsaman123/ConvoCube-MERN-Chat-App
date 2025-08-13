@@ -2,8 +2,8 @@ export const host =
     typeof window !== 'undefined' &&
         (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
         ? 'http://localhost:5000'
-        : 'https://convo-cube-chat.vercel.app';
-// export const host = "https://convo-cube-chat.vercel.app";
+        : 'https://convo-cube-backend.vercel.app';
+// export const host = "https://convo-cube-backend.vercel.app";
 console.log(window.location)
 export const loginRoute = `${host}/api/auth/login`;
 export const registerRoute = `${host}/api/auth/register`;
