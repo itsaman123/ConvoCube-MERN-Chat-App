@@ -11,12 +11,12 @@ require("dotenv").config();
 app.use(cors({
   origin: process.env.NODE_ENV === 'production'
     ? ['https://convocube-chat.vercel.app', 'https://convocube-mern-chat-app.onrender.com']
-    : 'http://localhost:3000',
+    : ['http://localhost:3000', 'https://convocube-chat.vercel.app'],
   credentials: true
 }));
 app.use(express.json());
 
-// MongoDB connection with better error handling
+
 mongoose
   .connect(process.env.MONGO_URL, {
     useNewUrlParser: true,
@@ -29,11 +29,11 @@ mongoose
     console.log("DB Connection Error:", err.message);
   });
 
-// API Routes
+
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
 
-// Health check endpoint
+
 app.get('/health', (req, res) => {
   res.json({
     message: 'Backend working fine',
@@ -42,7 +42,7 @@ app.get('/health', (req, res) => {
   });
 });
 
-// Root endpoint
+
 app.get('/', (req, res) => {
   res.json({
     message: 'ConvoCube Chat API',
@@ -55,7 +55,7 @@ app.get('/', (req, res) => {
   });
 });
 
-// Global error handler
+
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({
@@ -64,7 +64,7 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Handle 404 routes
+
 app.use('*', (req, res) => {
   res.status(404).json({
     error: 'Route not found',
@@ -73,20 +73,20 @@ app.use('*', (req, res) => {
   });
 });
 
-// Only set up server and socket.io in non-serverless environments
-if (true) {   // always run socket.io server
+
+if (true) {
 
   const PORT = process.env.PORT || 5000;
   const server = app.listen(PORT, () =>
     console.log(`Server started on port ${PORT}`)
   );
 
-  // Socket.io setup (only for non-serverless)
+
   const io = socket(server, {
     cors: {
       origin: process.env.NODE_ENV === 'production'
         ? ['https://convocube-chat.vercel.app', 'https://convocube-mern-chat-app.onrender.com']
-        : 'http://localhost:3000',
+        : ['http://localhost:3000', 'https://convocube-chat.vercel.app'],
       credentials: true,
     },
   });
@@ -103,13 +103,13 @@ if (true) {   // always run socket.io server
 
     socket.on("send-msg", async (data) => {
       try {
-        // Check if this is a group message
+
         const group = await Group.findById(data.to);
 
         if (group) {
-          // This is a group message - send to all group members
+
           group.members.forEach(memberId => {
-            if (memberId.toString() !== data.from) { // Don't send to sender
+            if (memberId.toString() !== data.from) {
               const memberSocket = onlineUsers.get(memberId.toString());
               if (memberSocket) {
                 socket.to(memberSocket).emit("msg-recieve", {
@@ -124,7 +124,7 @@ if (true) {   // always run socket.io server
             }
           });
         } else {
-          // This is an individual message
+
           const sendUserSocket = onlineUsers.get(data.to);
           if (sendUserSocket) {
             socket.to(sendUserSocket).emit("msg-recieve", {
@@ -141,11 +141,11 @@ if (true) {   // always run socket.io server
 
     socket.on("typing", async (data) => {
       try {
-        // Check if this is a group typing
+
         const group = await Group.findById(data.to);
 
         if (group) {
-          // Send typing indicator to all group members
+
           group.members.forEach(memberId => {
             if (memberId.toString() !== data.from) {
               const memberSocket = onlineUsers.get(memberId.toString());
@@ -160,7 +160,7 @@ if (true) {   // always run socket.io server
             }
           });
         } else {
-          // Individual typing
+
           const sendUserSocket = onlineUsers.get(data.to);
           if (sendUserSocket) {
             socket.to(sendUserSocket).emit("user-typing", {
@@ -176,11 +176,11 @@ if (true) {   // always run socket.io server
 
     socket.on("stop-typing", async (data) => {
       try {
-        // Check if this is a group typing
+
         const group = await Group.findById(data.to);
 
         if (group) {
-          // Send stop typing to all group members
+
           group.members.forEach(memberId => {
             if (memberId.toString() !== data.from) {
               const memberSocket = onlineUsers.get(memberId.toString());
@@ -194,7 +194,7 @@ if (true) {   // always run socket.io server
             }
           });
         } else {
-          // Individual stop typing
+
           const sendUserSocket = onlineUsers.get(data.to);
           if (sendUserSocket) {
             socket.to(sendUserSocket).emit("user-stopped-typing", {
@@ -228,7 +228,7 @@ if (true) {   // always run socket.io server
     });
 
     socket.on("disconnect", () => {
-      // Remove user from online users when they disconnect
+
       for (const [userId, socketId] of onlineUsers.entries()) {
         if (socketId === socket.id) {
           onlineUsers.delete(userId);
@@ -239,5 +239,5 @@ if (true) {   // always run socket.io server
   });
 }
 
-// Export the app for Vercel
+
 module.exports = app;
