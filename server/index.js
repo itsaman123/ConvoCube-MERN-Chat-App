@@ -10,7 +10,7 @@ require("dotenv").config();
 
 app.use(cors({
   origin: process.env.NODE_ENV === 'production'
-    ? ['https://convocube-chat.vercel.app', 'https://convo-cube-backend.vercel.app']
+    ? ['https://convocube-chat.vercel.app', 'https://convocube-mern-chat-app.onrender.com']
     : 'http://localhost:3000',
   credentials: true
 }));
