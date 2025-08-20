@@ -84,7 +84,9 @@ if (true) {   // always run socket.io server
   // Socket.io setup (only for non-serverless)
   const io = socket(server, {
     cors: {
-      origin: "http://localhost:3000",
+      origin: process.env.NODE_ENV === 'production'
+        ? ['https://convocube-chat.vercel.app', 'https://convocube-mern-chat-app.onrender.com']
+        : 'http://localhost:3000',
       credentials: true,
     },
   });
