@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
 import { sendMessageRoute, recieveMessageRoute } from "../utils/APIRoutes";
 import UserAvatar from "./UserAvatar";
-import { FaCheck, FaCheckDouble, FaRegCopy, FaReply, FaBell, FaBellSlash } from "react-icons/fa";
+import { FaCheck, FaCheckDouble, FaRegCopy, FaReply } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -20,100 +20,6 @@ export default function ChatContainer({ currentChat, socket, showMobileBackButto
   const [currentUser, setCurrentUser] = useState(null);
   const navigate = useNavigate();
   const [replyTo, setReplyTo] = useState(null);
-  const [notificationPermission, setNotificationPermission] = useState('default');
-
-  // Request notification permission on component mount
-  useEffect(() => {
-    const requestNotificationPermission = async () => {
-      if ('Notification' in window) {
-        const permission = await Notification.requestPermission();
-        setNotificationPermission(permission);
-      }
-    };
-
-    requestNotificationPermission();
-  }, []);
-
-  // Show notification function
-  const showNotification = (title, body, icon = null) => {
-    if (notificationPermission === 'granted' && document.hidden) {
-      const notification = new Notification(title, {
-        body,
-        icon: icon || '/favicon.ico',
-        badge: '/favicon.ico',
-        tag: 'chat-message',
-        requireInteraction: false,
-        silent: false
-      });
-
-      // Auto close notification after 5 seconds
-      setTimeout(() => {
-        notification.close();
-      }, 5000);
-
-      // Handle notification click
-      notification.onclick = () => {
-        window.focus();
-        notification.close();
-      };
-    }
-
-    // Play notification sound (if not muted)
-    playNotificationSound();
-  };
-
-  // Show toast notification with message preview
-  const showMessageToast = (senderName, message, isGroup = false, groupName = '') => {
-    const messagePreview = message.length > 50 ? message.substring(0, 50) + '...' : message;
-    const title = isGroup ? `${senderName} in ${groupName}` : senderName;
-
-    toast.info(
-      <div>
-        <div style={{ fontWeight: 'bold', marginBottom: '0.3rem' }}>{title}</div>
-        <div style={{ fontSize: '0.9rem', opacity: 0.9 }}>{messagePreview}</div>
-      </div>,
-      {
-        position: "top-right",
-        autoClose: 4000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        theme: "dark",
-        style: {
-          background: '#181818',
-          border: '1px solid #8E75F0',
-          borderRadius: '8px',
-          minWidth: '300px'
-        }
-      }
-    );
-  };
-
-  // Play notification sound
-  const playNotificationSound = () => {
-    try {
-      // Create a simple notification sound using Web Audio API
-      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-      const oscillator = audioContext.createOscillator();
-      const gainNode = audioContext.createGain();
-
-      oscillator.connect(gainNode);
-      gainNode.connect(audioContext.destination);
-
-      oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
-      oscillator.frequency.setValueAtTime(600, audioContext.currentTime + 0.1);
-      oscillator.frequency.setValueAtTime(800, audioContext.currentTime + 0.2);
-
-      gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
-
-      oscillator.start(audioContext.currentTime);
-      oscillator.stop(audioContext.currentTime + 0.3);
-    } catch (error) {
-      console.log('Could not play notification sound:', error);
-    }
-  };
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -143,16 +49,6 @@ export default function ChatContainer({ currentChat, socket, showMobileBackButto
               status: data.status,
               from: data.from
             });
-
-            // Show notification for group messages
-            const senderName = data.senderName || 'Someone';
-            showNotification(
-              `New message in ${currentChat.name}`,
-              `${senderName}: ${data.msg.substring(0, 50)}${data.msg.length > 50 ? '...' : ''}`
-            );
-
-            // Show toast notification for group messages
-            showMessageToast(senderName, data.msg, true, currentChat.name);
           }
         } else {
           // For individual messages, check if the 'from' field matches current chat
@@ -164,15 +60,6 @@ export default function ChatContainer({ currentChat, socket, showMobileBackButto
               from: data.from
             });
 
-            // Show notification for individual messages
-            const senderName = currentChat.username || 'Someone';
-            showNotification(
-              `New message from ${senderName}`,
-              data.msg.substring(0, 100) + (data.msg.length > 100 ? '...' : '')
-            );
-
-            // Show toast notification for individual messages
-            showMessageToast(senderName, data.msg, false);
           }
         }
       };
@@ -360,37 +247,6 @@ export default function ChatContainer({ currentChat, socket, showMobileBackButto
     }
   };
 
-  const handleNotificationPermission = async () => {
-    if ('Notification' in window) {
-      const permission = await Notification.requestPermission();
-      setNotificationPermission(permission);
-      if (permission === 'granted') {
-        toast.success('Notifications enabled!', { position: "bottom-right", autoClose: 2000, theme: "dark" });
-      } else if (permission === 'denied') {
-        toast.error('Notifications blocked. Please enable them in your browser settings.', { position: "bottom-right", autoClose: 4000, theme: "dark" });
-      }
-    }
-  };
-
-  // Handle page visibility changes
-  useEffect(() => {
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible') {
-        // Clear any existing notifications when user returns to the tab
-        if ('Notification' in window && Notification.permission === 'granted') {
-          // This will clear notifications with the same tag
-          // Note: This is a workaround as there's no direct API to clear notifications
-        }
-      }
-    };
-
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-
-    return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-    };
-  }, []);
-
   // Cleanup timeout on unmount
   useEffect(() => {
     return () => {
@@ -423,15 +279,6 @@ export default function ChatContainer({ currentChat, socket, showMobileBackButto
                 {currentChat.members.map(m => m.username).join(', ')}
               </div>
             )}
-          </div>
-          <div className="notification-status">
-            <button
-              onClick={handleNotificationPermission}
-              title={notificationPermission === 'granted' ? 'Notifications enabled' : 'Click to enable notifications'}
-              className={`notification-btn ${notificationPermission === 'granted' ? 'enabled' : 'disabled'}`}
-            >
-              {notificationPermission === 'granted' ? <FaBell /> : <FaBellSlash />}
-            </button>
           </div>
         </div>
         <Logout />
@@ -575,53 +422,17 @@ const Container = styled.div`
           height: 2.8rem;
         }
       }
-             .username {
-         h3 {
-           color: #ffffff;
-           font-weight: 700;
-         }
-         .typing-indicator {
-           color: #ffffff;
-           font-size: 0.8rem;
-           font-style: italic;
-         }
-       }
-       .notification-status {
-         margin-left: 1rem;
-         .notification-btn {
-           background: none;
-           border: none;
-           color: #ffffff;
-           cursor: pointer;
-           padding: 0.5rem;
-           border-radius: 50%;
-           transition: all 0.3s ease;
-           display: flex;
-           align-items: center;
-           justify-content: center;
-           
-           &.enabled {
-             color: #8E75F0;
-             &:hover {
-               background: rgba(142, 117, 240, 0.1);
-               transform: scale(1.1);
-             }
-           }
-           
-           &.disabled {
-             color: #666;
-             &:hover {
-               background: rgba(255, 255, 255, 0.1);
-               color: #ffffff;
-               transform: scale(1.1);
-             }
-           }
-           
-           svg {
-             font-size: 1.2rem;
-           }
-         }
-       }
+      .username {
+        h3 {
+          color: #ffffff;
+          font-weight: 700;
+        }
+        .typing-indicator {
+          color: #ffffff;
+          font-size: 0.8rem;
+          font-style: italic;
+        }
+      }
     }
   }
 
@@ -797,4 +608,3 @@ const ReplyPreview = styled.div`
       margin-left: 0.3rem;
     }
   }
-`;
