@@ -35,7 +35,7 @@ export default function ChatInput({ handleSendMsg, onTyping }) {
     <Container>
       <div className="button-container">
         <div className="emoji">
-          <BsEmojiSmileFill onClick={handleEmojiPickerhideShow} />
+          {/* <BsEmojiSmileFill onClick={handleEmojiPickerhideShow} /> */}
           {showEmojiPicker && <Picker onEmojiClick={handleEmojiClick} />}
         </div>
       </div>
