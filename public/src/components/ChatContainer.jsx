@@ -607,4 +607,4 @@ const ReplyPreview = styled.div`
       font-size: 0.9rem;
       margin-left: 0.3rem;
     }
-  }
+  }`;
