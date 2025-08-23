@@ -143,21 +143,52 @@ const Container = styled.div`
   background: #000000;
   height: 100vh;
   width: 100vw;
+  padding: 1rem;
+  box-sizing: border-box;
 
   .loader {
     max-inline-size: 100%;
   }
 
   .title-container {
+    text-align: center;
+    padding: 0 1rem;
+    
     h1 {
       color: #ffffff;
       font-weight: 700;
       letter-spacing: 2px;
+      font-size: 2rem;
+      line-height: 1.2;
+      margin: 0;
+      
+      @media (max-width: 768px) {
+        font-size: 1.5rem;
+        letter-spacing: 1px;
+      }
+      
+      @media (max-width: 480px) {
+        font-size: 1.2rem;
+        letter-spacing: 0.5px;
+      }
     }
   }
+  
   .avatars {
     display: flex;
     gap: 2rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 100%;
+    padding: 0 1rem;
+
+    @media (max-width: 768px) {
+      gap: 1.5rem;
+    }
+    
+    @media (max-width: 480px) {
+      gap: 1rem;
+    }
 
     .avatar {
       border: 0.4rem solid transparent;
@@ -170,17 +201,46 @@ const Container = styled.div`
       cursor: pointer;
       background: #333;
       box-shadow: 0 2px 8px 0 #8E75F044;
+      flex-shrink: 0;
+
+      @media (max-width: 768px) {
+        border-width: 0.3rem;
+        padding: 0.3rem;
+      }
+      
+      @media (max-width: 480px) {
+        border-width: 0.25rem;
+        padding: 0.25rem;
+      }
 
       img {
         height: 6rem;
         transition: 0.3s box-shadow, 0.3s border;
+        
+        @media (max-width: 768px) {
+          height: 5rem;
+        }
+        
+        @media (max-width: 480px) {
+          height: 4rem;
+        }
       }
     }
+    
     .selected {
       border: 0.4rem solid #8E75F0;
       box-shadow: 0 4px 16px 0 #8E75F044;
+      
+      @media (max-width: 768px) {
+        border-width: 0.3rem;
+      }
+      
+      @media (max-width: 480px) {
+        border-width: 0.25rem;
+      }
     }
   }
+  
   .submit-btn {
     background: #8E75F0;
     color: #ffffff;
@@ -193,8 +253,36 @@ const Container = styled.div`
     text-transform: uppercase;
     box-shadow: 0 2px 8px 0 #8E75F044;
     transition: background 0.2s;
+    min-width: 200px;
+    
+    @media (max-width: 768px) {
+      padding: 0.8rem 1.5rem;
+      font-size: 0.9rem;
+      min-width: 180px;
+    }
+    
+    @media (max-width: 480px) {
+      padding: 0.7rem 1.2rem;
+      font-size: 0.8rem;
+      min-width: 160px;
+    }
+    
     &:hover {
       background: #7A5FD0;
     }
+    
+    &:active {
+      transform: scale(0.98);
+    }
+  }
+  
+  @media (max-width: 768px) {
+    gap: 2rem;
+    padding: 0.5rem;
+  }
+  
+  @media (max-width: 480px) {
+    gap: 1.5rem;
+    padding: 0.25rem;
   }
 `;

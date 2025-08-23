@@ -6,6 +6,7 @@ const messageRoutes = require("./routes/messages");
 const app = express();
 const socket = require("socket.io");
 const Group = require("./models/groupModel");
+const morgan = require('morgan');
 require("dotenv").config();
 
 app.use(cors({
@@ -29,7 +30,7 @@ mongoose
     console.log("DB Connection Error:", err.message);
   });
 
-
+app.use(morgan('dev'));
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
 

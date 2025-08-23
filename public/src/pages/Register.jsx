@@ -136,51 +136,96 @@ const FormContainer = styled.div`
   gap: 1rem;
   align-items: center;
   background: #000000;
+  padding: 1rem;
+  box-sizing: border-box;
+  
   .brand {
     display: flex;
     align-items: center;
     gap: 1rem;
     justify-content: center;
     img {
-      height: 5rem;
+      height: 4rem;
+      
+      @media (max-width: 768px) {
+        height: 4rem;
+      }
+      
+      @media (max-width: 480px) {
+        height: 3rem;
+      }
     }
     h1 {
       color: #ffffff;
       text-transform: uppercase;
       letter-spacing: 2px;
       font-weight: 700;
+      font-size: 1.8rem;
+      
+      @media (max-width: 768px) {
+        font-size: 1.5rem;
+        letter-spacing: 1px;
+      }
+      
+      @media (max-width: 480px) {
+        font-size: 1.2rem;
+        letter-spacing: 0.5px;
+      }
     }
   }
 
   form {
     display: flex;
     flex-direction: column;
-    gap: 2rem;
+    gap: 1.5rem;
     background: #000000;
     border-radius: 2rem;
-    padding: 3rem 5rem;
+    padding: 2.5rem 4rem;
     box-shadow: 0 8px 32px 0 #8E75F033;
     border: 1.5px solid #8E75F0;
     backdrop-filter: blur(8px);
+    width: 100%;
+    max-width: 400px;
+    
+    @media (max-width: 768px) {
+      padding: 2rem 3rem;
+      gap: 1.5rem;
+      border-radius: 1.5rem;
+    }
+    
+    @media (max-width: 480px) {
+      padding: 1.5rem 2rem;
+      gap: 1.2rem;
+      border-radius: 1rem;
+    }
   }
+  
   input {
     background: #333;
-    padding: 1rem;
+    padding: 0.8rem;
     border: 0.1rem solid #8E75F0;
     border-radius: 0.7rem;
     color: #ffffff;
     width: 100%;
     font-size: 1rem;
     transition: border 0.2s;
+    box-sizing: border-box;
+    
+    @media (max-width: 480px) {
+      padding: 0.8rem;
+      font-size: 0.9rem;
+    }
+    
     &:focus {
       border: 0.1rem solid #8E75F0;
       outline: none;
     }
   }
+  
   button {
     background: #8E75F0;
     color: #ffffff;
-    padding: 1rem 2rem;
+    padding: 0.8rem 1.5rem;
     border: none;
     font-weight: bold;
     cursor: pointer;
@@ -189,13 +234,36 @@ const FormContainer = styled.div`
     text-transform: uppercase;
     box-shadow: 0 2px 8px 0 #8E75F044;
     transition: background 0.2s;
+    
+    @media (max-width: 768px) {
+      padding: 0.8rem 1.5rem;
+      font-size: 0.9rem;
+    }
+    
+    @media (max-width: 480px) {
+      padding: 0.7rem 1.2rem;
+      font-size: 0.8rem;
+    }
+    
     &:hover {
       background: #7A5FD0;
     }
+    
+    &:active {
+      transform: scale(0.98);
+    }
   }
+  
   span {
     color: #ffffff;
     text-transform: uppercase;
+    text-align: center;
+    font-size: 0.9rem;
+    
+    @media (max-width: 480px) {
+      font-size: 0.8rem;
+    }
+    
     a {
       color: #ffffff;
       text-decoration: none;
